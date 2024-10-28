@@ -10,9 +10,7 @@ interface TransactionFormProps {
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) => {
   const [amount, setAmount] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
-  const [currency, setCurrency] = useState<string>('');
-  const [transactionType, setTransactionType] = useState<string>('');
+  const [data, setData] = useState<string>('');
   const [recipient, setRecipient] = useState<string>('');
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>('');
@@ -23,23 +21,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
   if (!sdkRef.current) {
     sdkRef.current = new ResVaultSDK();
   }
-
-  useEffect(() => {
-    const fetchTransactionData = async () => {
-      try {
-        const response = await fetch('/path/to/transactionData.json');
-        const data = await response.json();
-        setAmount(data.amount);
-        setCategory(data.category);
-        setCurrency(data.currency);
-        setTransactionType(data.transactionType);
-      } catch (error) {
-        console.error('Error fetching transaction data:', error);
-      }
-    };
-
-    fetchTransactionData();
-  }, []);
 
   useEffect(() => {
     const sdk = sdkRef.current;
@@ -77,19 +58,24 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
       return;
     }
 
-    const transactionData = {
-      amount,
-      category,
-      currency,
-      transactionType,
-    };
+    let parsedData = {};
+    if (data.trim() !== '') {
+      try {
+        parsedData = JSON.parse(data);
+      } catch (error) {
+        setModalTitle('Validation Error');
+        setModalMessage('Invalid JSON format in the data field. Please check and try again.');
+        setShowModal(true);
+        return;
+      }
+    }
 
     if (sdkRef.current) {
       sdkRef.current.sendMessage({
         type: 'commit',
         direction: 'commit',
         amount: amount,
-        data: transactionData,
+        data: parsedData,
         recipient: recipient,
       });
     } else {
@@ -131,29 +117,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
               <input
                 type="text"
                 className="form-control"
-                placeholder="Enter category here"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter currency here"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-              />
-            </div>
-
-            <div className="form-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter transaction type here"
-                value={transactionType}
-                onChange={(e) => setTransactionType(e.target.value)}
+                placeholder="Enter your data here (JSON)"
+                value={data}
+                onChange={(e) => setData(e.target.value)}
               />
             </div>
 
