@@ -1,12 +1,15 @@
-// services/transactionService.js
+// services/graphqlService.js
 import pkg from "@apollo/client";
 const { ApolloClient, InMemoryCache, gql } = pkg;
 import fetch from "cross-fetch"; // Ensure cross-fetch is installed for server-side GraphQL requests
+import dotenv from "dotenv";
+
+// Load environment variables from .env file
+dotenv.config();
 
 // Create an instance of ApolloClient
 const client = new ApolloClient({
-  uri: "http://100.64.166.61:8070/graphql", // Replace with .env URI!!!!!!
-  // uri: process.env.GRAPHQL_URI,
+  uri: process.env.GRAPHQL_URI, // Use the URI from .env
   cache: new InMemoryCache(),
   fetch,
 });
