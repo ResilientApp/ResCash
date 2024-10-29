@@ -9,7 +9,7 @@ interface TransactionFormProps {
 }
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) => {
-  const recipientAddress : String = "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA"
+  const recipientAddress: string = "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
   const [amount, setAmount] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   const [currency, setCurrency] = useState<string>('');
@@ -57,25 +57,33 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
           setModalMessage('Transaction successful! ID: ' + transactionID);
           console.log(message.data);
 
+          // Prepare the request body
+          const requestBody = {
+            transactionID,
+            amount,
+            category,
+            currency,
+            transactionType,
+            timestamp,
+          };
+
+          // Log the request body
+          console.log('Request Body:', JSON.stringify(requestBody));
+
           // Send transaction data to the backend
           try {
-            const response = await fetch('http://localhost:8099/api/saveTransaction', {
+            const response = await fetch('http://localhost:8099/api/transactions/saveTransaction', {
               method: 'POST',
               headers: {
                 'Content-Type': 'application/json',
               },
-              body: JSON.stringify({
-                amount,
-                category,
-                currency,
-                transactionType,
-                transactionID,
-                timestamp,
-              }),
+              body: JSON.stringify(requestBody),
             });
 
             const result = await response.json();
-            if (!result.success) {
+            if (result.success) {
+              console.log('Transaction saved successfully:', result);
+            } else {
               console.error('Failed to save transaction to backend:', result.message);
             }
           } catch (error) {
@@ -94,17 +102,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
     return () => {
       sdk.removeMessageListener(messageHandler);
     };
-  }, []);
+  }, [amount, category, currency, transactionType]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    // if (!recipient) {
-    //   setModalTitle('Validation Error');
-    //   setModalMessage('Please enter a recipient address.');
-    //   setShowModal(true);
-    //   return;
-    // }
 
     const transactionData = {
       amount,
@@ -185,16 +186,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
                 onChange={(e) => setTransactionType(e.target.value)}
               />
             </div>
-
-            {/* <div className="form-group mb-4">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter recipient address here"
-                value={recipient}
-                onChange={(e) => setRecipient(e.target.value)}
-              />
-            </div> */}
 
             <div className="form-group text-center">
               <button type="submit" className="btn btn-primary button">
