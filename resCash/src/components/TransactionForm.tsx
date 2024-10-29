@@ -9,6 +9,7 @@ interface TransactionFormProps {
 }
 
 const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) => {
+  const recipientAddress : String = "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA"
   const [amount, setAmount] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   const [currency, setCurrency] = useState<string>('');
@@ -45,13 +46,41 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
     const sdk = sdkRef.current;
     if (!sdk) return;
 
-    const messageHandler = (event: MessageEvent) => {
+    const messageHandler = async (event: MessageEvent) => {
       const message = event.data;
 
       if (message && message.type === 'FROM_CONTENT_SCRIPT' && message.data && message.data.success !== undefined) {
         if (message.data.success) {
+          const transactionID = message.data.data.postTransaction.id;
+          const timestamp = new Date().toISOString();
           setModalTitle('Success');
-          setModalMessage('Transaction successful! ID: ' + message.data.data.postTransaction.id);
+          setModalMessage('Transaction successful! ID: ' + transactionID);
+          console.log(message.data);
+
+          // Send transaction data to the backend
+          try {
+            const response = await fetch('http://localhost:8099/api/saveTransaction', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+              },
+              body: JSON.stringify({
+                amount,
+                category,
+                currency,
+                transactionType,
+                transactionID,
+                timestamp,
+              }),
+            });
+
+            const result = await response.json();
+            if (!result.success) {
+              console.error('Failed to save transaction to backend:', result.message);
+            }
+          } catch (error) {
+            console.error('An error occurred while saving transaction to backend:', error);
+          }
         } else {
           setModalTitle('Transaction Failed');
           setModalMessage('Transaction failed: ' + (message.data.error || JSON.stringify(message.data.errors)));
@@ -70,12 +99,12 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!recipient) {
-      setModalTitle('Validation Error');
-      setModalMessage('Please enter a recipient address.');
-      setShowModal(true);
-      return;
-    }
+    // if (!recipient) {
+    //   setModalTitle('Validation Error');
+    //   setModalMessage('Please enter a recipient address.');
+    //   setShowModal(true);
+    //   return;
+    // }
 
     const transactionData = {
       amount,
@@ -90,7 +119,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
         direction: 'commit',
         amount: amount,
         data: transactionData,
-        recipient: recipient,
+        recipient: recipientAddress,
       });
     } else {
       setModalTitle('Error');
@@ -157,7 +186,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
               />
             </div>
 
-            <div className="form-group mb-4">
+            {/* <div className="form-group mb-4">
               <input
                 type="text"
                 className="form-control"
@@ -165,7 +194,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
                 value={recipient}
                 onChange={(e) => setRecipient(e.target.value)}
               />
-            </div>
+            </div> */}
 
             <div className="form-group text-center">
               <button type="submit" className="btn btn-primary button">

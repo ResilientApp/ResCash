@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-const { v4: uuidv4 } = require('uuid');
+import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
 // Define the transaction schema
 const transactionSchema = new mongoose.Schema({
@@ -8,8 +8,9 @@ const transactionSchema = new mongoose.Schema({
   category: { type: String, required: true },
   currency: { type: String, required: true },
   transactionType: { type: String, required: true },
-//   timestamp: { type: Date, default: Date.now }
+  timestamp: { type: Date, default: Date.now }
 });
 
 // Export the model
-module.exports = mongoose.model('Transaction', transactionSchema);
+const Transaction = mongoose.model('Transaction', transactionSchema);
+export default Transaction;
