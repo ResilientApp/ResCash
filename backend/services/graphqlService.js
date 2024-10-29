@@ -1,11 +1,12 @@
 // services/transactionService.js
-import pkg from '@apollo/client';
+import pkg from "@apollo/client";
 const { ApolloClient, InMemoryCache, gql } = pkg;
-import fetch from 'cross-fetch'; // Ensure cross-fetch is installed for server-side GraphQL requests
+import fetch from "cross-fetch"; // Ensure cross-fetch is installed for server-side GraphQL requests
 
 // Create an instance of ApolloClient
 const client = new ApolloClient({
-  uri: 'https:resdb.quiet98k.com/graphql', // Replace with your actual GraphQL endpoint
+  uri: "http://100.64.166.61:8070/graphql", // Replace with .env URI!!!!!!
+  // uri: process.env.GRAPHQL_URI,
   cache: new InMemoryCache(),
   fetch,
 });
@@ -28,8 +29,8 @@ const getPublicKey = async (id) => {
     });
     return response.data.getTransaction.publicKey; // Return the public key
   } catch (error) {
-    console.error('Error fetching public key:', error);
-    throw new Error('Could not fetch public key');
+    console.error("Error fetching public key:", error);
+    throw new Error("Could not fetch public key");
   }
 };
 
