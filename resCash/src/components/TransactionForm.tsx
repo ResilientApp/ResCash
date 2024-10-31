@@ -99,23 +99,27 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
     const currentTimestamp = new Date().toISOString();
     setTimestamp(currentTimestamp);
 
+    // Define transaction data directly as an object
     const transactionData = {
-      is_deleted: false, // Add the is_deleted boolean
-      timestamp: currentTimestamp, // Use the updated timestamp
+      is_deleted: "false",
+      timestamp: currentTimestamp,
     };
 
-    // Log the transactionData object
-    console.log("TransactionData (Object):", transactionData);
-
-    // Log the transactionData object as a JSON string
-    console.log("TransactionData (JSON):", JSON.stringify(transactionData));
-
     if (sdkRef.current) {
-      sdkRef.current.sendMessage({
+
+      console.log('Sending transaction data:', {
         type: 'commit',
         direction: 'commit',
         amount: amount,
         data: transactionData,
+        recipient: recipientAddress,
+      });
+
+      sdkRef.current.sendMessage({
+        type: 'commit',
+        direction: 'commit',
+        amount: amount,
+        data: transactionData, // Pass as an object, not a JSON string
         recipient: recipientAddress,
       });
     } else {
@@ -124,6 +128,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
       setShowModal(true);
     }
   };
+
 
   const handleLogout = () => {
     onLogout();

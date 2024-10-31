@@ -70,6 +70,14 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
       }
     }
 
+      console.log('Sending transaction data:', {
+        type: 'commit',
+        direction: 'commit',
+        amount: amount,
+        data: parsedData,
+        recipient: recipient,
+      });
+
     if (sdkRef.current) {
       sdkRef.current.sendMessage({
         type: 'commit',
