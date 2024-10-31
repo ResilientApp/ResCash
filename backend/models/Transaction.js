@@ -1,11 +1,9 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import { v4 as uuidv4 } from 'uuid';
 
+// Define the transaction schema
 const transactionSchema = new mongoose.Schema({
-  transactionID: {
-    type: String,
-    required: true,
-    unique: true,  // Ensures each transactionID is unique
-  },
+  transactionId: { type: String, default: uuidv4, unique: true },
   amount: {
     type: Number,  // Store as a number for calculations
     required: true,
@@ -33,10 +31,21 @@ const transactionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  notes: {
+    type: String,
+    required: false,
+  },
+  merchant: {
+    type: String,
+    required: false,
+  },
+  paymentMethod: {
+    type: String,
+    required: false,
+  },
 });
 
 // Create a model from the schema
 const Transaction = mongoose.model('Transaction', transactionSchema);
 
-// Export the model for use in other parts of your application
 export default Transaction;

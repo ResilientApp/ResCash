@@ -13,8 +13,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
   const [amount, setAmount] = useState<string>('');
   const [category, setCategory] = useState<string>('');
   const [currency, setCurrency] = useState<string>('');
-  const [transactionType, setTransactionType] = useState<string>('');
-  const [recipient, setRecipient] = useState<string>('');
+  const [transactionType, setTransactionType] = useState<string>('Expense');
+  const [notes, setNotes] = useState<string>('');
+  const [merchant, setMerchant] = useState<string>('');
+  const [paymentMethod, setPaymentMethod] = useState<string>('Card');
+  const [timestamp, setTimestamp] = useState<string>(new Date().toISOString()); // Initialize timestamp state
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>('');
   const [modalMessage, setModalMessage] = useState<string>('');
@@ -26,23 +29,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
   }
 
   useEffect(() => {
-    const fetchTransactionData = async () => {
-      try {
-        const response = await fetch('/path/to/transactionData.json');
-        const data = await response.json();
-        setAmount(data.amount);
-        setCategory(data.category);
-        setCurrency(data.currency);
-        setTransactionType(data.transactionType);
-      } catch (error) {
-        console.error('Error fetching transaction data:', error);
-      }
-    };
-
-    fetchTransactionData();
-  }, []);
-
-  useEffect(() => {
     const sdk = sdkRef.current;
     if (!sdk) return;
 
@@ -52,7 +38,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
       if (message && message.type === 'FROM_CONTENT_SCRIPT' && message.data && message.data.success !== undefined) {
         if (message.data.success) {
           const transactionID = message.data.data.postTransaction.id;
-          const timestamp = new Date().toISOString();
           setModalTitle('Success');
           setModalMessage('Transaction successful! ID: ' + transactionID);
           console.log(message.data);
@@ -64,7 +49,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
             category,
             currency,
             transactionType,
-            timestamp,
+            notes,
+            merchant,
+            paymentMethod,
+            timestamp, // Use the timestamp from state
           };
 
           // Log the request body
@@ -102,17 +90,25 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
     return () => {
       sdk.removeMessageListener(messageHandler);
     };
-  }, [amount, category, currency, transactionType]);
+  }, [amount, category, currency, transactionType, notes, merchant, paymentMethod, timestamp]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Update the timestamp state
+    const currentTimestamp = new Date().toISOString();
+    setTimestamp(currentTimestamp);
+
     const transactionData = {
-      amount,
-      category,
-      currency,
-      transactionType,
+      is_deleted: false, // Add the is_deleted boolean
+      timestamp: currentTimestamp, // Use the updated timestamp
     };
+
+    // Log the transactionData object
+    console.log("TransactionData (Object):", transactionData);
+
+    // Log the transactionData object as a JSON string
+    console.log("TransactionData (JSON):", JSON.stringify(transactionData));
 
     if (sdkRef.current) {
       sdkRef.current.sendMessage({
@@ -178,13 +174,45 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
             </div>
 
             <div className="form-group mb-3">
+              <select
+                className="form-control"
+                value={transactionType}
+                onChange={(e) => setTransactionType(e.target.value)}
+              >
+                <option value="Expense">Expense</option>
+                <option value="Income">Income</option>
+              </select>
+            </div>
+
+            <div className="form-group mb-3">
               <input
                 type="text"
                 className="form-control"
-                placeholder="Enter transaction type here"
-                value={transactionType}
-                onChange={(e) => setTransactionType(e.target.value)}
+                placeholder="Enter notes here"
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
               />
+            </div>
+
+            <div className="form-group mb-3">
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Enter merchant name here"
+                value={merchant}
+                onChange={(e) => setMerchant(e.target.value)}
+              />
+            </div>
+
+            <div className="form-group mb-3">
+              <select
+                className="form-control"
+                value={paymentMethod}
+                onChange={(e) => setPaymentMethod(e.target.value)}
+              >
+                <option value="Card">Card</option>
+                <option value="Cash">Cash</option>
+              </select>
             </div>
 
             <div className="form-group text-center">

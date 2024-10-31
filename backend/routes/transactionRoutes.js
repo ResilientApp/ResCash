@@ -14,10 +14,10 @@ router.post('/saveTransaction', async (req, res) => {
     // Print the request body for debugging
     console.log('Request Body:', req.body);
 
-    const { transactionID, amount, category, currency, transactionType, timestamp } = req.body;
+    const { transactionID, amount, category, currency, transactionType, notes, merchant, paymentMethod, timestamp } = req.body;
 
     // Print the extracted variables for debugging
-    console.log('Extracted Variables:', { transactionID, amount, category, currency, transactionType, timestamp });
+    console.log('Extracted Variables:', { transactionID, amount, category, currency, transactionType, notes, merchant, paymentMethod, timestamp });
 
     // Fetch the public key
     const publicKey = await getPublicKey(transactionID);
@@ -50,6 +50,9 @@ router.post('/saveTransaction', async (req, res) => {
       category,
       currency,
       transactionType,
+      notes,
+      merchant,
+      paymentMethod,
       timestamp: timestamp_date,  // Match property names with schema
       publicKey,
     };
