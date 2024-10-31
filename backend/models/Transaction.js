@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from 'uuid';
 
 // Define the transaction schema
 const transactionSchema = new mongoose.Schema({
-  transactionId: { type: String, default: uuidv4, unique: true },
+  transactionID: { type: String, unique: true },
   amount: {
     type: Number,  // Store as a number for calculations
     required: true,
