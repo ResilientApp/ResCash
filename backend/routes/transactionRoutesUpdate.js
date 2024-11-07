@@ -23,6 +23,7 @@ router.put('/updateTransaction/:id', async (req, res) => {
     }
 
     // Convert timestamp to a Date object if provided
+    // Upadte the timestamp
     const timestamp_date = timestamp ? new Date(timestamp) : undefined;
 
     // Update the transaction in the database
