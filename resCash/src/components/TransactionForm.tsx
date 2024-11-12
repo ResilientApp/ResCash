@@ -138,96 +138,93 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
 
   return (
     <>
-      <div className="page-container">
-        <div className="form-container">
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2 className="heading">Submit Transaction</h2>
-            <button type="button" className="btn btn-danger logout-button" onClick={handleLogout}>
-              Logout
-            </button>
+
+      <div className="form-container">
+        <div className="d-flex justify-content-between align-items-center mb-4">
+          <h2 className="heading">Submit Transaction</h2>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <div className="form-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter your amount here"
+              value={amount}
+              onChange={(e) => setAmount(e.target.value)}
+            />
           </div>
 
-          <form onSubmit={handleSubmit}>
-            <div className="form-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter your amount here"
-                value={amount}
-                onChange={(e) => setAmount(e.target.value)}
-              />
-            </div>
+          <div className="form-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter category here"
+              value={category}
+              onChange={(e) => setCategory(e.target.value)}
+            />
+          </div>
 
-            <div className="form-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter category here"
-                value={category}
-                onChange={(e) => setCategory(e.target.value)}
-              />
-            </div>
+          <div className="form-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter currency here"
+              value={currency}
+              onChange={(e) => setCurrency(e.target.value)}
+            />
+          </div>
 
-            <div className="form-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter currency here"
-                value={currency}
-                onChange={(e) => setCurrency(e.target.value)}
-              />
-            </div>
+          <div className="form-group mb-3">
+            <select
+              className="form-control"
+              value={transactionType}
+              onChange={(e) => setTransactionType(e.target.value)}
+            >
+              <option value="Expense">Expense</option>
+              <option value="Income">Income</option>
+            </select>
+          </div>
 
-            <div className="form-group mb-3">
-              <select
-                className="form-control"
-                value={transactionType}
-                onChange={(e) => setTransactionType(e.target.value)}
-              >
-                <option value="Expense">Expense</option>
-                <option value="Income">Income</option>
-              </select>
-            </div>
+          <div className="form-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter notes here"
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+          </div>
 
-            <div className="form-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter notes here"
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-            </div>
+          <div className="form-group mb-3">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Enter merchant name here"
+              value={merchant}
+              onChange={(e) => setMerchant(e.target.value)}
+            />
+          </div>
 
-            <div className="form-group mb-3">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Enter merchant name here"
-                value={merchant}
-                onChange={(e) => setMerchant(e.target.value)}
-              />
-            </div>
+          <div className="form-group mb-3">
+            <select
+              className="form-control"
+              value={paymentMethod}
+              onChange={(e) => setPaymentMethod(e.target.value)}
+            >
+              <option value="Card">Card</option>
+              <option value="Cash">Cash</option>
+            </select>
+          </div>
 
-            <div className="form-group mb-3">
-              <select
-                className="form-control"
-                value={paymentMethod}
-                onChange={(e) => setPaymentMethod(e.target.value)}
-              >
-                <option value="Card">Card</option>
-                <option value="Cash">Cash</option>
-              </select>
-            </div>
-
-            <div className="form-group text-center">
-              <button type="submit" className="btn btn-primary button">
-                Submit Transaction
-              </button>
-            </div>
-          </form>
-        </div>
+          <div className="form-group text-center">
+            <button type="submit" className="btn btn-primary button">
+              Submit Transaction
+            </button>
+          </div>
+        </form>
       </div>
+
 
       <NotificationModal
         show={showModal}
