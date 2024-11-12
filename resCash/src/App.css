@@ -7,6 +7,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
   padding: 20px;
 }
 
@@ -170,4 +171,63 @@
   width: 300;
   height: 300;
   margin: '0 auto';
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background-color: rgba(26, 26, 46, 0.9);
+  color: #f8f9fa;
+  position: sticky; /* 固定在页面顶部 */
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+
+.header-title {
+  flex: 1;
+  text-align: center;
+  font-size: 24px;
+  color: #f8f9fa;
+}
+
+.main-content {
+  display: flex;
+  flex: 1;
+}
+
+.sidebar {
+  background-color: #2a2a3e;
+  padding: 20px;
+  color: #f8f9fa;
+  width: 200px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  z-index: 1000;
+}
+
+.sidebar-item {
+  margin: 10px 0;
+  font-size: 18px;
+  color: #b0b0b0;
+  cursor: pointer;
+}
+
+.sidebar-item.active,
+.sidebar-item:hover {
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
 }

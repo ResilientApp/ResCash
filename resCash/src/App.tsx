@@ -3,6 +3,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Login from './components/Login';
 import TransactionForm from './components/TransactionForm';
+import MainLayout from './components/MainPage';
 import Loader from './components/Loader';
 
 function App() {
@@ -17,6 +18,12 @@ function App() {
       setIsAuthenticated(true);
     }
   }, []);
+
+  useEffect(() => {
+    console.log('isLoadingAfterLogin:', isLoadingAfterLogin);
+    console.log('isAuthenticated:', isAuthenticated);
+  }, [isLoadingAfterLogin, isAuthenticated]);
+  
 
   const handleLogin = (authToken: string) => {
     setIsLoadingAfterLogin(true);
@@ -39,7 +46,7 @@ function App() {
     <div className="App">
       {isLoadingAfterLogin && <Loader />}
       {!isLoadingAfterLogin && isAuthenticated ? (
-        <TransactionForm onLogout={handleLogout} token={token} />
+        <MainLayout token={token} onLogout={handleLogout} />
       ) : (
         <Login onLogin={handleLogin} />
       )}
