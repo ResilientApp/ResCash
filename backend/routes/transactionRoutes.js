@@ -1,7 +1,7 @@
 // routes/transactionRoutes.js
 import express from 'express';
 import Transaction from '../models/Transaction.js'; // Ensure correct import
-import getPublicKey from '../services/graphqlService.js'; // Ensure correct import
+import getPublicKey from "../services/getPublicKey.js"; // Ensure correct import
 import dotenv from 'dotenv';
 
 dotenv.config();
