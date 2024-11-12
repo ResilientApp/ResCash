@@ -9,97 +9,34 @@ dotenv.config();
 const router = express.Router();
 
 // Update
-router.put("/updateTransaction/:id", async (req, res) => {
+// Route to update a transaction based on JSON data from the request body
+router.put('/updateTransaction/:id', async (req, res) => {
   try {
-    // Get database ID
-    const { id } = req.params;
-
-    // Get data
-    const {
-      amount,
-      category,
-      currency,
-      transactionType,
-      notes,
-      merchant,
-      paymentMethod,
-      timestamp,
-    } = req.body;
-
-    // find and get transactionID
-    const existingTransaction = await Transaction.findById(id);
-    if (!existingTransaction) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Transaction not found." });
+    const transaction = await Transaction.findById(req.params.id);
+    if (!transaction) {
+      return res.status(404).json({ success: false, message: 'Transaction not found.' });
     }
 
-    const transactionID = existingTransaction.transactionID;
+    // Update the transaction fields with the data from the request body
+    const { amount, category, currency, transactionType, notes, merchant, paymentMethod, timestamp } = req.body;
 
-    // Get public key
-    const publicKey = await getPublicKey(transactionID);
-    if (!publicKey) {
-      console.log("Public key not found for transactionID:", transactionID);
-      return res
-        .status(404)
-        .json({ success: false, message: "Public key not found." });
-    }
+    if (amount !== undefined) transaction.amount = Number(amount);
+    if (category !== undefined) transaction.category = category;
+    if (currency !== undefined) transaction.currency = currency;
+    if (transactionType !== undefined) transaction.transactionType = transactionType;
+    if (notes !== undefined) transaction.notes = notes;
+    if (merchant !== undefined) transaction.merchant = merchant;
+    if (paymentMethod !== undefined) transaction.paymentMethod = paymentMethod;
+    if (timestamp !== undefined) transaction.timestamp = new Date(timestamp);
 
-    // Verify the amount
-    const amount_num = Number(amount);
-    if (isNaN(amount_num) || amount_num < 0) {
-      console.log("Invalid amount provided:", amount);
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid amount provided." });
-    }
-
-    // Convert timestamp to a Date object if provided
-    const timestamp_date = timestamp ? new Date(timestamp) : undefined;
-
-    // Update
-    const updateData = {
-      amount: amount_num,
-      category,
-      currency,
-      transactionType,
-      notes,
-      merchant,
-      paymentMethod,
-      publicKey,
-    };
-
-    // Time
-    if (timestamp_date) {
-      updateData.timestamp = timestamp_date;
-    }
-
-    // Update
-    const updatedTransaction = await Transaction.findByIdAndUpdate(
-      id,
-      updateData,
-      { new: true }
-    );
-
-    if (!updatedTransaction) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Transaction not found after update.",
-        });
-    }
-
-    res.status(200).json({
-      success: true,
-      message: "Transaction updated successfully!",
-      updatedTransaction,
-    });
+    const result = await transaction.save();
+    res.status(200).json({ success: true, message: 'Transaction updated successfully!', result });
   } catch (error) {
-    console.error("Error updating transaction:", error);
+    console.error('Error updating transaction:', error); // Log the error for debugging
     res.status(500).json({ success: false, message: error.message });
   }
 });
+
 
 // export the router
 export default router;
