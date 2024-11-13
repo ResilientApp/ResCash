@@ -1,6 +1,7 @@
 import React, { createContext, useReducer, useContext, useEffect, useState } from 'react';
 import './SidebarStyle.css'; // 确保样式文件已正确引入
 import NotificationModal from './NotificationModal'; 
+import Read from './read'; // 导入 Read 组件
 
 // 导入图片和导航链接（假设 images 和 data 以相同方式导入）
 // import { personsImgs } from '../../utils/images';
@@ -29,6 +30,7 @@ const Sidebar: React.FC = () => {
   const [activeLinkIdx] = useState(1);
   const [sidebarClass, setSidebarClass] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState<string | number>('home'); // 修改部分：允许 currentPage 既可以是字符串也可以是数字
 
   // 使用上下文提供值
   const [state, dispatch] = useReducer(sidebarReducer, initialState);
@@ -60,6 +62,7 @@ const Sidebar: React.FC = () => {
               <li className="nav-item" key={navigationLink.id}>
                 <a
                   href="#"
+                  onClick={() => setCurrentPage(navigationLink.id)} // 修改部分：点击时设置 currentPage 为 id
                   className={`nav-link ${navigationLink.id === activeLinkIdx ? 'active' : ''}`}
                 >
                   <img src={navigationLink.image} className="nav-link-icon" alt={navigationLink.title} />
@@ -67,17 +70,33 @@ const Sidebar: React.FC = () => {
                 </a>
               </li>
             ))}
+
+            {/* 修改部分：新增导航链接到 Read 组件 */}
+            <li className="nav-item">
+              <a
+                href="#"
+                onClick={() => setCurrentPage('read')} // 点击时设置为 Read 页面
+                className="nav-link"
+              >
+                <span className="nav-link-text">读取数据</span>
+              </a>
+            </li>
           </ul>
         </nav>
 
-
         {/* 模态框和加载器 */}
         <NotificationModal
-            show={showModal}
-            title="Notification Title"
-            message="This is a notification message."
-            onClose={() => setShowModal(false)}
+          show={showModal}
+          title="Notification Title"
+          message="This is a notification message."
+          onClose={() => setShowModal(false)}
         />
+      </div>
+
+      {/* 页面内容：根据 currentPage 的值来渲染不同的组件 */}
+      <div className="main-content">
+        {currentPage === 'home' && <div>欢迎来到主页！</div>}
+        {currentPage === 'read' && <Read />} {/* 当 currentPage 为 read 时，渲染 Read 组件 */}
       </div>
     </SidebarContext.Provider>
   );
