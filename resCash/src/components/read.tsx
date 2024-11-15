@@ -1,20 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import './readStyle.css';
 
-
 const Read = () => {
   const [data, setData] = useState<Array<{ id: number; name: string; timestamp: string; category: string; transactionType: string; merchant: string; paymentMethod: string; amount: number; currency: string; notes: string }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // 模拟API请求 - 在此处调用后端API获取数据
+    // Simulate an API request - Call the backend API here to fetch data
     const fetchData = async () => {
       try {
         const response = await fetch('/api/data');
         
         if (!response.ok) {
-          throw new Error(`网络响应失败，状态码: ${response.status}`);
+          throw new Error(`Network response failed, status code: ${response.status}`);
         }
 
         const contentType = response.headers.get("content-type");
@@ -24,7 +23,7 @@ const Read = () => {
         } else {
           const responseText = await response.text();
           console.error('Data returned by the server (not JSON):', responseText);
-          //throw new Error('服务器返回的不是 JSON 格式的数据');
+          // throw new Error('The data returned by the server is not in JSON format');
         }
 
         setLoading(false);
@@ -39,11 +38,11 @@ const Read = () => {
   }, []);
 
   if (loading) {
-    return <div>加载中...</div>;
+    return <div>Loading...</div>;
   }
 
   if (error) {
-    return <div>错误: {error}</div>;
+    return <div>Error: {error}</div>;
   }
 
   return (
@@ -68,7 +67,7 @@ const Read = () => {
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={10}>Did not Find Data</td>
+                <td colSpan={10}>No Data Found</td>
               </tr>
             ) : (
               data.map((item) => (
