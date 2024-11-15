@@ -1,12 +1,13 @@
 import React, { createContext, useReducer, useContext, useEffect, useState } from 'react';
-import './SidebarStyle.css'; // 确保样式文件已正确引入
+import './SidebarStyle.css'; // Ensure the style file is correctly imported
 import NotificationModal from './NotificationModal'; 
+import Read from './read'; // Import the Read component
 
-// 导入图片和导航链接（假设 images 和 data 以相同方式导入）
+// Import images and navigation links (assuming images and data are imported similarly)
 // import { personsImgs } from '../../utils/images';
 import { navigationLinks } from '../data/data';
 
-// 初始状态和 reducer 定义
+// Initial state and reducer definition
 const initialState = {
   isSidebarOpen: false
 };
@@ -18,24 +19,25 @@ const sidebarReducer = (state: typeof initialState, action: { type: string }) =>
   throw new Error(`No matching "${action.type}" action type`);
 };
 
-// 创建上下文
+// Create context
 const SidebarContext = createContext({
   isSidebarOpen: false,
   toggleSidebar: () => {},
 });
 
-// 上下文提供器和 Sidebar 组件合并
+// Context provider and Sidebar component combined
 const Sidebar: React.FC = () => {
   const [activeLinkIdx] = useState(1);
   const [sidebarClass, setSidebarClass] = useState("");
   const [showModal, setShowModal] = useState(false);
+  const [currentPage, setCurrentPage] = useState<string | number>('home'); // Modification: Allow currentPage to be either a string or a number
 
-  // 使用上下文提供值
+  // Use context to provide values
   const [state, dispatch] = useReducer(sidebarReducer, initialState);
   const toggleSidebar = () => dispatch({ type: "TOGGLE_SIDEBAR" });
   const { isSidebarOpen } = state;
 
-  // 动态更新 sidebar 样式
+  // Dynamically update sidebar style
   useEffect(() => {
     if (isSidebarOpen) {
       setSidebarClass('sidebar-change');
@@ -47,19 +49,20 @@ const Sidebar: React.FC = () => {
   return (
     <SidebarContext.Provider value={{ isSidebarOpen, toggleSidebar }}>
       <div className={`sidebar ${sidebarClass}`}>
-        {/* 用户信息 */}
+        {/* User info */}
         <button className="button" onClick={() => setShowModal(true)}>CREATE</button>
         <div className="user-info">
           <span className="info-name">Navigation</span>
         </div>
 
-        {/* 导航链接 */}
+        {/* Navigation links */}
         <nav className="navigation">
           <ul className="nav-list">
             {navigationLinks.map((navigationLink) => (
               <li className="nav-item" key={navigationLink.id}>
                 <a
                   href="#"
+                  onClick={() => setCurrentPage(navigationLink.id)} // Modification: Set currentPage to id on click
                   className={`nav-link ${navigationLink.id === activeLinkIdx ? 'active' : ''}`}
                 >
                   <img src={navigationLink.image} className="nav-link-icon" alt={navigationLink.title} />
@@ -67,17 +70,33 @@ const Sidebar: React.FC = () => {
                 </a>
               </li>
             ))}
+
+            {/* Modification: Add a new navigation link to the Read component */}
+            <li className="nav-item">
+              <a
+                href="#"
+                onClick={() => setCurrentPage('read')} // Set to Read page on click
+                className="nav-link"
+              >
+                <span className="nav-link-text">Read Data</span>
+              </a>
+            </li>
           </ul>
         </nav>
 
-
-        {/* 模态框和加载器 */}
+        {/* Modal and loader */}
         <NotificationModal
-            show={showModal}
-            title="Notification Title"
-            message="This is a notification message."
-            onClose={() => setShowModal(false)}
+          show={showModal}
+          title="Notification Title"
+          message="This is a notification message."
+          onClose={() => setShowModal(false)}
         />
+      </div>
+
+      {/* Page content: Render different components based on the value of currentPage */}
+      <div className="main-content">
+        {currentPage === 'home' && <div>Welcome to the homepage!</div>}
+        {currentPage === 'read' && <Read />} {/* Render Read component when currentPage is read */}
       </div>
     </SidebarContext.Provider>
   );
