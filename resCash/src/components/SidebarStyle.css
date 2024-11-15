@@ -134,3 +134,28 @@
       margin-left: 0px;
     }
   }
+
+  /*for read part*/
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .data-table th, .data-table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: left;
+  }
+  .data-table th {
+    background-color: #f2f2f2;
+  }
+  .edit-button {
+    padding: 4px 8px;
+    background-color: #d9534f;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+  .edit-button:hover {
+    background-color: #c9302c;
+  }
+  
