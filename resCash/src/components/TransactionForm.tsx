@@ -8,6 +8,19 @@ interface TransactionFormProps {
   token: string | null;
 }
 
+interface Transaction {
+  transactionID: string;
+  amount: number;
+  category: string;
+  currency: string;
+  transactionType: string;
+  notes: string;
+  merchant: string;
+  paymentMethod: string;
+  timestamp: string;
+  is_deleted: boolean;
+}
+
 const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) => {
   const recipientAddress: string = "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
   const [amount, setAmount] = useState<string>('');
@@ -135,7 +148,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
   };
 
   const handleCloseModal = () => setShowModal(false);
-
+  
   return (
     <>
 

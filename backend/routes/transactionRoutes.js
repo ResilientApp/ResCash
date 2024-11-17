@@ -95,5 +95,65 @@ router.get('/userTransactions', authenticate, async (req, res) => {
   }
 });
 
+
+import mongoose from "mongoose";
+
+router.delete("/deleteTransaction/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate ObjectId format
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid transaction ID format." });
+    }
+
+    const deletedTransaction = await Transaction.findByIdAndDelete(id);
+    if (!deletedTransaction) {
+      return res.status(404).json({ success: false, message: "Transaction not found." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Transaction deleted successfully!",
+      deletedTransaction,
+    });
+  } catch (error) {
+    console.error("Error deleting transaction:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
+
+router.patch("/restoreTransaction/:id", async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Validate the ObjectId
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ success: false, message: "Invalid transaction ID format." });
+    }
+
+    // Restore the transaction by setting is_deleted to false
+    const restoredTransaction = await Transaction.findByIdAndUpdate(
+      id,
+      { is_deleted: false },
+      { new: true } // Return the updated document
+    );
+
+    if (!restoredTransaction) {
+      return res.status(404).json({ success: false, message: "Transaction not found." });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Transaction restored successfully!",
+      restoredTransaction,
+    });
+  } catch (error) {
+    console.error("Error restoring transaction:", error);
+    res.status(500).json({ success: false, message: error.message });
+  }
+});
+
 // Export the router
 export default router;
