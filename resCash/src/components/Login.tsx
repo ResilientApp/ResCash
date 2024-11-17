@@ -23,6 +23,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   const animationContainer = useRef<HTMLDivElement>(null);
 
+  // Initialize the Lottie animation
   useEffect(() => {
     if (animationContainer.current) {
       const instance = lottie.loadAnimation({
@@ -54,24 +55,63 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     }
   }, []);
 
+  // Fetch the public key using the backend API
+  const fetchPublicKey = async (token: string) => {
+    try {
+      const response = await fetch('http://localhost:8099/api/transactions/publicKey', {
+        method: 'GET',
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        sessionStorage.setItem('publicKey', result.publicKey);
+        console.log('Public key retrieved and stored:', result.publicKey);
+      } else {
+        console.error('Failed to fetch public key:', response.statusText);
+        setModalTitle('Error');
+        setModalMessage('Failed to retrieve public key. Please try again.');
+        setShowModal(true);
+      }
+    } catch (error) {
+      console.error('Error fetching public key:', error);
+      setModalTitle('Error');
+      setModalMessage('An error occurred while fetching public key.');
+      setShowModal(true);
+    }
+  };
+
+  // Handle messages from ResVault
   useEffect(() => {
     const sdk = sdkRef.current;
     if (!sdk) return;
 
-    const messageHandler = (event: MessageEvent) => {
+    const messageHandler = async (event: MessageEvent) => {
       const message = event.data;
+      console.log('Received message:', message);
 
       if (message && message.type === 'FROM_CONTENT_SCRIPT' && message.data && message.data.success !== undefined) {
-          if (message.data.success) {
-            const token = uuidv4();
-            sessionStorage.setItem('token', token);
-            onLogin(token);
-          }
-      } else if (message && message.type === 'FROM_CONTENT_SCRIPT' && message.data && message.data === "error") {
+        if (message.data.success) {
+          console.log('Authentication success:', message.data);
+
+          // Generate a token and store it
+          const token = uuidv4();
+          sessionStorage.setItem('token', token);
+          onLogin(token);
+
+          // Fetch the public key using the token
+          await fetchPublicKey(token);
+        } else {
+          setModalTitle('Authentication Failed');
+          setModalMessage('Please connect ResVault to this ResilientApp and try again.');
+          setShowModal(true);
+        }
+      } else if (message && message.type === 'FROM_CONTENT_SCRIPT' && message.data === 'error') {
         setModalTitle('Authentication Failed');
-        setModalMessage(
-          "Please connect ResVault to this ResilientApp and try again."
-        );
+        setModalMessage('Please connect ResVault to this ResilientApp and try again.');
         setShowModal(true);
       }
     };
@@ -103,7 +143,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       <div className="page-container">
         <div className="form-container">
           <h2 className="heading">Resilient App</h2>
-          
+
           <div ref={animationContainer} className="animation-container"></div>
 
           <div className="form-group text-center mb-4">
