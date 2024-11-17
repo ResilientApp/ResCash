@@ -2,40 +2,47 @@ import React, { useEffect, useState } from 'react';
 import './readStyle.css';
 
 const Read = () => {
-  const [data, setData] = useState<Array<{ id: number; name: string; timestamp: string; category: string; transactionType: string; merchant: string; paymentMethod: string; amount: number; currency: string; notes: string }>>([]);
+  const [data, setData] = useState<Array<{
+    transactionID: string;
+    timestamp: string;
+    category: string;
+    transactionType: string;
+    merchant: string;
+    paymentMethod: string;
+    amount: number;
+    currency: string;
+    notes: string;
+  }>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    // Simulate an API request - Call the backend API here to fetch data
-    const fetchData = async () => {
+    const fetchAllTransactions = async () => {
       try {
-        const response = await fetch('/api/data');
-        
+        const response = await fetch('http://localhost:8099/api/transactions/', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+  
         if (!response.ok) {
           throw new Error(`Network response failed, status code: ${response.status}`);
         }
-
-        const contentType = response.headers.get("content-type");
-        if (contentType && contentType.includes("application/json")) {
-          const result = await response.json();
-          setData(result);
-        } else {
-          const responseText = await response.text();
-          console.error('Data returned by the server (not JSON):', responseText);
-          // throw new Error('The data returned by the server is not in JSON format');
-        }
-
-        setLoading(false);
+  
+        const result = await response.json(); // Parse the JSON response
+        setData(result); // Set the fetched data into state
       } catch (err: any) {
         console.error('Data retrieval error:', err);
         setError(err.message);
-        setLoading(false);
+      } finally {
+        setLoading(false); // Stop loading after the fetch
       }
     };
-
-    fetchData();
+  
+    fetchAllTransactions(); // Fetch all transactions on component mount
   }, []);
+  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -61,27 +68,25 @@ const Read = () => {
               <th>Amount</th>
               <th>Currency</th>
               <th>Notes</th>
-              <th>Action</th>
             </tr>
           </thead>
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={10}>No Data Found</td>
+                <td colSpan={9}>No Data Found</td>
               </tr>
             ) : (
-              data.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.id}</td>
-                  <td>{item.timestamp}</td>
-                  <td>{item.category}</td>
-                  <td>{item.transactionType}</td>
-                  <td>{item.merchant}</td>
-                  <td>{item.paymentMethod}</td>
-                  <td>{item.amount}</td>
-                  <td>{item.currency}</td>
-                  <td>{item.notes}</td>
-                  <td><button className="edit-button">EDIT</button></td>
+              data.map((transaction) => (
+                <tr key={transaction.transactionID}>
+                  <td>{transaction.transactionID}</td>
+                  <td>{new Date(transaction.timestamp).toLocaleString()}</td>
+                  <td>{transaction.category}</td>
+                  <td>{transaction.transactionType}</td>
+                  <td>{transaction.merchant}</td>
+                  <td>{transaction.paymentMethod}</td>
+                  <td>{transaction.amount}</td>
+                  <td>{transaction.currency}</td>
+                  <td>{transaction.notes}</td>
                 </tr>
               ))
             )}
