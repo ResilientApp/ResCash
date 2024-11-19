@@ -3,7 +3,6 @@ import './readStyle.css';
 
 const Read = () => {
   const [data, setData] = useState<Array<{
-    transactionID: string;
     timestamp: string;
     category: string;
     transactionType: string;
@@ -59,7 +58,6 @@ const Read = () => {
         <table className="data-table">
           <thead>
             <tr>
-              <th>Transaction ID</th>
               <th>Timestamp</th>
               <th>Category</th>
               <th>Transaction Type</th>
@@ -73,12 +71,11 @@ const Read = () => {
           <tbody>
             {data.length === 0 ? (
               <tr>
-                <td colSpan={9}>No Data Found</td>
+                <td colSpan={8}>No Data Found</td>
               </tr>
             ) : (
-              data.map((transaction) => (
-                <tr key={transaction.transactionID}>
-                  <td>{transaction.transactionID}</td>
+              data.map((transaction, index) => (
+                <tr key={index}>
                   <td>{new Date(transaction.timestamp).toLocaleString()}</td>
                   <td>{transaction.category}</td>
                   <td>{transaction.transactionType}</td>
