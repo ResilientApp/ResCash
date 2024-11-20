@@ -236,3 +236,37 @@
   align-items: center;
   padding: 20px;
 }
+
+.report-container {
+  display: flex;
+  gap: 20px; /* Adds spacing between the columns */
+  padding: 20px;
+  background-color: rgba(26, 26, 46, 0.9);
+  border-radius: 8px;
+  border: 1px solid #4e4e68;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.column {
+  flex: 1; /* Ensures equal width for both columns */
+  padding: 20px;
+  border: 1px solid #4e4e68;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  background-color: #1a1a2e;
+  color: #ffffff;
+  border-radius: 8px;
+}
+
+.column h2 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.column ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.column li {
+  margin-bottom: 10px;
+}

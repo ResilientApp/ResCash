@@ -76,6 +76,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
             <TransactionForm onLogout={onLogout} token={token} />
           )}
           {currentPage === "turnover" && <Read />}{" "}
+          {currentPage === "report" && <Report />}{" "}
           {/* Modification: Display the Read component based on currentPage */}
         </div>
       </div>
