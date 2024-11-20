@@ -1,5 +1,5 @@
 .page-container {
-  background-image: url('assets/images/bg.svg');
+  background-image: url("assets/images/bg.svg");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -36,6 +36,12 @@
   width: 100%;
   box-sizing: border-box;
   margin-bottom: 15px;
+}
+
+.form-control:focus {
+  border-color: #80bdff;
+  box-shadow: 0 0 8px rgba(128, 189, 255, 0.5);
+  outline: none;
 }
 
 .form-control::placeholder {
@@ -170,7 +176,7 @@
 .animationContainer {
   width: 300;
   height: 300;
-  margin: '0 auto';
+  margin: "0 auto";
 }
 
 .header {
@@ -185,7 +191,6 @@
   width: 100%;
   z-index: 1000;
 }
-
 
 .header-title {
   flex: 1;

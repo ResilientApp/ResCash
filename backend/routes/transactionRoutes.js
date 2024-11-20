@@ -104,13 +104,11 @@ router.post("/saveTransaction", async (req, res) => {
     };
     const transaction = new Transaction(transactionData);
     const result = await transaction.save();
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Transaction saved successfully!",
-        result,
-      });
+    res.status(200).json({
+      success: true,
+      message: "Transaction saved successfully!",
+      result,
+    });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
   }
@@ -127,7 +125,7 @@ router.get("/", async (req, res) => {
 });
 
 // Route to get a transaction's public key by ID
-router.get("/publicKey/:id", async (req, res) => {
+router.get("/getPublicKey/:id", async (req, res) => {
   try {
     const publicKey = await getPublicKey(req.params.id);
     if (!publicKey) {

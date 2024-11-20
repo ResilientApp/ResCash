@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useRef } from 'react';
-import ResVaultSDK from 'resvault-sdk';
-import '../App.css';
-import NotificationModal from './NotificationModal';
+import React, { useState, useEffect, useRef } from "react";
+import ResVaultSDK from "resvault-sdk";
+import "../App.css";
+import NotificationModal from "./NotificationModal";
 
 interface TransactionFormProps {
   onLogout: () => void;
@@ -21,19 +21,23 @@ interface Transaction {
   is_deleted: boolean;
 }
 
-const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) => {
-  const recipientAddress: string = "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
-  const [amount, setAmount] = useState<string>('');
-  const [category, setCategory] = useState<string>('');
-  const [currency, setCurrency] = useState<string>('');
-  const [transactionType, setTransactionType] = useState<string>('Expense');
-  const [notes, setNotes] = useState<string>('');
-  const [merchant, setMerchant] = useState<string>('');
-  const [paymentMethod, setPaymentMethod] = useState<string>('Card');
+const TransactionForm: React.FC<TransactionFormProps> = ({
+  onLogout,
+  token,
+}) => {
+  const recipientAddress: string =
+    "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
+  const [amount, setAmount] = useState<string>("");
+  const [category, setCategory] = useState<string>("");
+  const [currency, setCurrency] = useState<string>("");
+  const [transactionType, setTransactionType] = useState<string>("Expense");
+  const [notes, setNotes] = useState<string>("");
+  const [merchant, setMerchant] = useState<string>("");
+  const [paymentMethod, setPaymentMethod] = useState<string>("Card");
   const [timestamp, setTimestamp] = useState<string>(new Date().toISOString()); // Initialize timestamp state
   const [showModal, setShowModal] = useState<boolean>(false);
-  const [modalTitle, setModalTitle] = useState<string>('');
-  const [modalMessage, setModalMessage] = useState<string>('');
+  const [modalTitle, setModalTitle] = useState<string>("");
+  const [modalMessage, setModalMessage] = useState<string>("");
 
   const sdkRef = useRef<ResVaultSDK | null>(null);
 
@@ -48,11 +52,16 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
     const messageHandler = async (event: MessageEvent) => {
       const message = event.data;
 
-      if (message && message.type === 'FROM_CONTENT_SCRIPT' && message.data && message.data.success !== undefined) {
+      if (
+        message &&
+        message.type === "FROM_CONTENT_SCRIPT" &&
+        message.data &&
+        message.data.success !== undefined
+      ) {
         if (message.data.success) {
           const transactionID = message.data.data.postTransaction.id;
-          setModalTitle('Success');
-          setModalMessage('Transaction successful! ID: ' + transactionID);
+          setModalTitle("Success");
+          setModalMessage("Transaction successful! ID: " + transactionID);
           console.log(message.data);
 
           // Prepare the request body
@@ -69,30 +78,42 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
           };
 
           // Log the request body
-          console.log('Request Body:', JSON.stringify(requestBody));
+          console.log("Request Body:", JSON.stringify(requestBody));
 
           // Send transaction data to the backend
           try {
-            const response = await fetch('http://localhost:8099/api/transactions/saveTransaction', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-              body: JSON.stringify(requestBody),
-            });
+            const response = await fetch(
+              "http://localhost:8099/api/transactions/saveTransaction",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify(requestBody),
+              }
+            );
 
             const result = await response.json();
             if (result.success) {
-              console.log('Transaction saved successfully:', result);
+              console.log("Transaction saved successfully:", result);
             } else {
-              console.error('Failed to save transaction to backend:', result.message);
+              console.error(
+                "Failed to save transaction to backend:",
+                result.message
+              );
             }
           } catch (error) {
-            console.error('An error occurred while saving transaction to backend:', error);
+            console.error(
+              "An error occurred while saving transaction to backend:",
+              error
+            );
           }
         } else {
-          setModalTitle('Transaction Failed');
-          setModalMessage('Transaction failed: ' + (message.data.error || JSON.stringify(message.data.errors)));
+          setModalTitle("Transaction Failed");
+          setModalMessage(
+            "Transaction failed: " +
+              (message.data.error || JSON.stringify(message.data.errors))
+          );
         }
         setShowModal(true);
       }
@@ -103,7 +124,16 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
     return () => {
       sdk.removeMessageListener(messageHandler);
     };
-  }, [amount, category, currency, transactionType, notes, merchant, paymentMethod, timestamp]);
+  }, [
+    amount,
+    category,
+    currency,
+    transactionType,
+    notes,
+    merchant,
+    paymentMethod,
+    timestamp,
+  ]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -119,39 +149,36 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
     };
 
     if (sdkRef.current) {
-
-      console.log('Sending transaction data:', {
-        type: 'commit',
-        direction: 'commit',
+      console.log("Sending transaction data:", {
+        type: "commit",
+        direction: "commit",
         amount: amount,
         data: transactionData,
         recipient: recipientAddress,
       });
 
       sdkRef.current.sendMessage({
-        type: 'commit',
-        direction: 'commit',
+        type: "commit",
+        direction: "commit",
         amount: amount,
         data: transactionData, // Pass as an object, not a JSON string
         recipient: recipientAddress,
       });
     } else {
-      setModalTitle('Error');
-      setModalMessage('SDK is not initialized.');
+      setModalTitle("Error");
+      setModalMessage("SDK is not initialized.");
       setShowModal(true);
     }
   };
-
 
   const handleLogout = () => {
     onLogout();
   };
 
   const handleCloseModal = () => setShowModal(false);
-  
+
   return (
     <>
-
       <div className="form-container">
         <div className="d-flex justify-content-between align-items-center mb-4">
           <h2 className="heading">Submit Transaction</h2>
@@ -169,23 +196,53 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
           </div>
 
           <div className="form-group mb-3">
-            <input
-              type="text"
+            <select
               className="form-control"
-              placeholder="Enter category here"
               value={category}
               onChange={(e) => setCategory(e.target.value)}
-            />
+            >
+              <option value="" disabled>
+                Select category
+              </option>
+              <optgroup label="Expense Categories">
+                <option value="Housing">Housing</option>
+                <option value="Utilities">Utilities</option>
+                <option value="Food">Food</option>
+                <option value="Transportation">Transportation</option>
+                <option value="Entertainment">Entertainment</option>
+                <option value="Healthcare">Healthcare</option>
+              </optgroup>
+              <optgroup label="Income Categories">
+                <option value="Employment">Employment</option>
+                <option value="Business">Business</option>
+                <option value="Investments">Investments</option>
+                <option value="Rentals">Rentals</option>
+                <option value="Gifts/Donations">Gifts/Donations</option>
+                <option value="Miscellaneous">Miscellaneous</option>
+              </optgroup>
+            </select>
           </div>
 
           <div className="form-group mb-3">
-            <input
-              type="text"
+            <select
               className="form-control"
-              placeholder="Enter currency here"
               value={currency}
               onChange={(e) => setCurrency(e.target.value)}
-            />
+            >
+              <option value="" disabled>
+                Select currency
+              </option>
+              <option value="USD">USD - United States Dollar</option>
+              <option value="EUR">EUR - Euro</option>
+              <option value="JPY">JPY - Japanese Yen</option>
+              <option value="GBP">GBP - British Pound</option>
+              <option value="AUD">AUD - Australian Dollar</option>
+              <option value="CAD">CAD - Canadian Dollar</option>
+              <option value="CHF">CHF - Swiss Franc</option>
+              <option value="CNY">CNY - Chinese Yuan</option>
+              <option value="SEK">SEK - Swedish Krona</option>
+              <option value="NZD">NZD - New Zealand Dollar</option>
+            </select>
           </div>
 
           <div className="form-group mb-3">
@@ -237,7 +294,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({ onLogout, token }) =>
           </div>
         </form>
       </div>
-
 
       <NotificationModal
         show={showModal}
