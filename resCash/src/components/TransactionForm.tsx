@@ -3,9 +3,14 @@ import ResVaultSDK from "resvault-sdk";
 import "../App.css";
 import NotificationModal from "./NotificationModal";
 
+// Adjusted TransactionFormProps to include optional initialData and onFormChange
 interface TransactionFormProps {
   onLogout: () => void;
   token: string | null;
+  initialData?: Transaction; // Added initialData prop to receive initial form data
+  onFormChange?: (updatedFields: Partial<Transaction>) => void; // Added onFormChange prop for handling form changes
+  hideSubmitButton?: boolean; // Added prop to control submit button visibility
+  hideHeading?: boolean; // Added prop to control heading visibility
 }
 
 interface Transaction {
@@ -24,17 +29,21 @@ interface Transaction {
 const TransactionForm: React.FC<TransactionFormProps> = ({
   onLogout,
   token,
+  initialData, // Added initialData
+  onFormChange, // Added onFormChange
+  hideSubmitButton, // Added hideSubmitButton
+  hideHeading, // Added hideHeading
 }) => {
   const recipientAddress: string =
     "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
-  const [amount, setAmount] = useState<string>("");
-  const [category, setCategory] = useState<string>("");
-  const [currency, setCurrency] = useState<string>("");
-  const [transactionType, setTransactionType] = useState<string>("Expense");
-  const [notes, setNotes] = useState<string>("");
-  const [merchant, setMerchant] = useState<string>("");
-  const [paymentMethod, setPaymentMethod] = useState<string>("Card");
-  const [timestamp, setTimestamp] = useState<string>(new Date().toISOString()); // Initialize timestamp state
+  const [amount, setAmount] = useState<string>(initialData?.amount.toString() || "");
+  const [category, setCategory] = useState<string>(initialData?.category || "");
+  const [currency, setCurrency] = useState<string>(initialData?.currency || "");
+  const [transactionType, setTransactionType] = useState<string>(initialData?.transactionType || "Expense");
+  const [notes, setNotes] = useState<string>(initialData?.notes || "");
+  const [merchant, setMerchant] = useState<string>(initialData?.merchant || "");
+  const [paymentMethod, setPaymentMethod] = useState<string>(initialData?.paymentMethod || "Card");
+  const [timestamp, setTimestamp] = useState<string>(initialData?.timestamp || new Date().toISOString());
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
@@ -44,6 +53,22 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   if (!sdkRef.current) {
     sdkRef.current = new ResVaultSDK();
   }
+
+  // If onFormChange is provided, call it whenever form data changes
+  useEffect(() => {
+    if (onFormChange) {
+      onFormChange({
+        amount: parseFloat(amount),
+        category,
+        currency,
+        transactionType,
+        notes,
+        merchant,
+        paymentMethod,
+        timestamp,
+      });
+    }
+  }, [amount, category, currency, transactionType, notes, merchant, paymentMethod, timestamp, onFormChange]);
 
   useEffect(() => {
     const sdk = sdkRef.current;
@@ -191,7 +216,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               className="form-control"
               placeholder="Enter your amount here"
               value={amount}
-              onChange={(e) => setAmount(e.target.value)}
+              onChange={(e) => {
+                setAmount(e.target.value);
+                onFormChange && onFormChange({ amount: parseFloat(e.target.value) });
+              }}
             />
           </div>
 
@@ -199,7 +227,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             <select
               className="form-control"
               value={category}
-              onChange={(e) => setCategory(e.target.value)}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                onFormChange && onFormChange({ category: e.target.value });
+              }}
             >
               <option value="" disabled>
                 Select category
@@ -227,7 +258,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             <select
               className="form-control"
               value={currency}
-              onChange={(e) => setCurrency(e.target.value)}
+              onChange={(e) => {
+                setCurrency(e.target.value);
+                onFormChange && onFormChange({ currency: e.target.value });
+              }}
             >
               <option value="" disabled>
                 Select currency
@@ -249,7 +283,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             <select
               className="form-control"
               value={transactionType}
-              onChange={(e) => setTransactionType(e.target.value)}
+              onChange={(e) => {
+                setTransactionType(e.target.value);
+                onFormChange && onFormChange({ transactionType: e.target.value });
+              }}
             >
               <option value="Expense">Expense</option>
               <option value="Income">Income</option>
@@ -262,7 +299,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               className="form-control"
               placeholder="Enter notes here"
               value={notes}
-              onChange={(e) => setNotes(e.target.value)}
+              onChange={(e) => {
+                setNotes(e.target.value);
+                onFormChange && onFormChange({ notes: e.target.value });
+              }}
             />
           </div>
 
@@ -272,7 +312,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               className="form-control"
               placeholder="Enter merchant name here"
               value={merchant}
-              onChange={(e) => setMerchant(e.target.value)}
+              onChange={(e) => {
+                setMerchant(e.target.value);
+                onFormChange && onFormChange({ merchant: e.target.value });
+              }}
             />
           </div>
 
@@ -280,7 +323,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             <select
               className="form-control"
               value={paymentMethod}
-              onChange={(e) => setPaymentMethod(e.target.value)}
+              onChange={(e) => {
+                setPaymentMethod(e.target.value);
+                onFormChange && onFormChange({ paymentMethod: e.target.value });
+              }}
             >
               <option value="Card">Card</option>
               <option value="Cash">Cash</option>

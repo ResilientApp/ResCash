@@ -1,19 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import './readStyle.css';
+import TransactionModal from './TransactionModal';
+
+interface Transaction {
+  _id: string;
+  transactionID: string;
+  timestamp: string;
+  category: string;
+  transactionType: string;
+  merchant: string;
+  paymentMethod: string;
+  amount: number;
+  currency: string;
+  notes: string;
+  is_deleted: boolean;
+}
 
 const Read = () => {
-  const [data, setData] = useState<Array<{
-    timestamp: string;
-    category: string;
-    transactionType: string;
-    merchant: string;
-    paymentMethod: string;
-    amount: number;
-    currency: string;
-    notes: string;
-  }>>([]);
+  const [data, setData] = useState<Array<Transaction>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchAllTransactions = async () => {
@@ -42,6 +50,26 @@ const Read = () => {
     fetchAllTransactions(); // Fetch all transactions on component mount
   }, []);
   
+  const handleRowClick = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowModal(true);
+  };
+  
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedTransaction(null);
+  };
+  
+  const handleSave = (updatedTransaction: Transaction) => {
+    // Update the transaction in the data array
+    setData((prevData) =>
+      prevData.map((transaction) =>
+        transaction._id === updatedTransaction._id ? updatedTransaction : transaction
+      )
+    );
+    // Close the modal
+    handleCloseModal();
+  };
 
   if (loading) {
     return <div>Loading...</div>;
@@ -75,7 +103,7 @@ const Read = () => {
               </tr>
             ) : (
               data.map((transaction, index) => (
-                <tr key={index}>
+                <tr key={index} onClick={() => handleRowClick(transaction)}>
                   <td>{new Date(transaction.timestamp).toLocaleString()}</td>
                   <td>{transaction.category}</td>
                   <td>{transaction.transactionType}</td>
@@ -90,6 +118,15 @@ const Read = () => {
           </tbody>
         </table>
       </div>
+
+      {showModal && selectedTransaction && (
+        <TransactionModal
+          transaction={selectedTransaction}
+          onClose={handleCloseModal}
+          onSave={handleSave}
+        />
+      )}
+
     </div>
   );
 };
