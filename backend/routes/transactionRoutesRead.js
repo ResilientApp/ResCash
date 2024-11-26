@@ -39,30 +39,25 @@ const authenticate = (req, res, next) => {
 
 
 // Route to fetch user-specific transactions
-router.get("/userTransactions", authenticate, async (req, res) => {
+router.get('/userTransactions', authenticate, async (req, res) => {
+  const publicKey = req.publicKey;
+
   try {
-    const publicKey = req.publicKey; // Retrieved from the authenticated request
+    // Fetch transactions from MongoDB for the logged-in user
+    const transactions = await Transaction.find({ publicKey });
 
-    if (!publicKey) {
-      return res.status(400).json({ message: "Public key is required" });
+    if (!transactions || transactions.length === 0) {
+      // Return a response indicating no transactions found
+      return res.status(200).json({ message: 'No transactions found', transactions: [] });
     }
 
-    // Fetch transactions from MongoDB using the publicKey
-    const mongoTransactions = await Transaction.find({
-      publicKey,
-    });
-
-    // If no transactions are found, return an appropriate message
-    if (!mongoTransactions || mongoTransactions.length === 0) {
-      return res.status(404).json({ message: "No transactions found for the user" });
-    }
-
-    // Return the transactions to the frontend
-    res.status(200).json(mongoTransactions);
+    // Return the transactions if found
+    return res.status(200).json(transactions);
   } catch (error) {
-    console.error("Error fetching user transactions:", error);
-    res.status(500).json({ message: error.message });
+    console.error('Error fetching user transactions:', error);
+    return res.status(500).json({ message: 'Internal server error' });
   }
 });
+
 
 export default router;

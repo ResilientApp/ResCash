@@ -19,26 +19,29 @@ const Read = () => {
   useEffect(() => {
     const fetchUserTransactions = async () => {
       try {
-        const token = sessionStorage.getItem('token'); // Retrieve JWT token from sessionStorage
-        console.log('Token:', token); // Debugging log
+        const token = sessionStorage.getItem('token'); // Retrieve JWT token
         if (!token) {
           throw new Error('No authentication token found');
         }
-        console.log('Token being sent:', token);
+    
         const response = await fetch('http://localhost:8099/api/read/userTransactions', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${token}`, // Include the token in the Authorization header
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
           },
         });
-  
+    
         if (!response.ok) {
           throw new Error(`Network response failed, status code: ${response.status}`);
         }
-  
+    
         const result = await response.json(); // Parse the JSON response
-        setData(result); // Set the fetched data into state
+        if (result.message === 'No transactions found') {
+          setData([]); // Set an empty array to indicate no transactions
+        } else {
+          setData(result); // Set the fetched transactions into state
+        }
       } catch (err: any) {
         console.error('Data retrieval error:', err);
         setError(err.message);
