@@ -4,6 +4,10 @@ import Sidebar from './Sidebar';
 import TransactionForm from './TransactionForm'; // Form component
 import NotificationModal from './NotificationModal'; // Modal component
 import Read from './read'; // Import Read component
+import CashFlow from './CashFlow'; // Import CashFlow component
+import { Chart as ChartJS, LineElement, CategoryScale, LinearScale, PointElement } from 'chart.js';
+
+ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 // Define the type for props
 interface MainLayoutProps {
@@ -46,9 +50,24 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
                         >
                             Turnover
                         </li>
-                        <li className="sidebar-item">Report</li>
-                        <li className="sidebar-item">Visualization</li>
-                        <li className="sidebar-item">Cash Flow</li>
+                        <li 
+                            className={`sidebar-item ${currentPage === 'report' ? 'active' : ''}`} 
+                            onClick={() => setCurrentPage('report')} // Placeholder for Report page
+                        >
+                            Report
+                        </li>
+                        <li 
+                            className={`sidebar-item ${currentPage === 'visualization' ? 'active' : ''}`} 
+                            onClick={() => setCurrentPage('visualization')} // Placeholder for Visualization page
+                        >
+                            Visualization
+                        </li>
+                        <li 
+                            className={`sidebar-item ${currentPage === 'cashflow' ? 'active' : ''}`} 
+                            onClick={() => setCurrentPage('cashflow')} // Modification: Switch to CashFlow page on click
+                        >
+                            Cash Flow
+                        </li>
                     </ul>
                 </nav>
         
@@ -58,6 +77,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
                         <TransactionForm onLogout={onLogout} token={token} />
                     )}
                     {currentPage === 'turnover' && <Read />} {/* Modification: Display the Read component based on currentPage */}
+                    {currentPage === 'cashflow' && <CashFlow />} {/* Display CashFlow component based on currentPage without setCurrentPage prop */}
                 </div>
             </div>
         
