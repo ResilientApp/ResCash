@@ -1,18 +1,28 @@
-import React, { createContext, useReducer, useContext, useEffect, useState } from 'react';
-import './SidebarStyle.css'; // Ensure the style file is correctly imported
-import NotificationModal from './NotificationModal'; 
-import Read from './read'; // Import the Read component
+import React, {
+  createContext,
+  useReducer,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import "./SidebarStyle.css"; // Ensure the style file is correctly imported
+import NotificationModal from "./NotificationModal";
+import Read from "./read"; // Import the Read component
+import Report from "./reports";
 
 // Import images and navigation links (assuming images and data are imported similarly)
 // import { personsImgs } from '../../utils/images';
-import { navigationLinks } from '../data/data';
+import { navigationLinks } from "../data/data";
 
 // Initial state and reducer definition
 const initialState = {
-  isSidebarOpen: false
+  isSidebarOpen: false,
 };
 
-const sidebarReducer = (state: typeof initialState, action: { type: string }) => {
+const sidebarReducer = (
+  state: typeof initialState,
+  action: { type: string }
+) => {
   if (action.type === "TOGGLE_SIDEBAR") {
     return { ...state, isSidebarOpen: !state.isSidebarOpen };
   }
@@ -30,7 +40,7 @@ const Sidebar: React.FC = () => {
   const [activeLinkIdx] = useState(1);
   const [sidebarClass, setSidebarClass] = useState("");
   const [showModal, setShowModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState<string | number>('home'); // Modification: Allow currentPage to be either a string or a number
+  const [currentPage, setCurrentPage] = useState<string | number>("home"); // Modification: Allow currentPage to be either a string or a number
 
   // Use context to provide values
   const [state, dispatch] = useReducer(sidebarReducer, initialState);
@@ -40,9 +50,9 @@ const Sidebar: React.FC = () => {
   // Dynamically update sidebar style
   useEffect(() => {
     if (isSidebarOpen) {
-      setSidebarClass('sidebar-change');
+      setSidebarClass("sidebar-change");
     } else {
-      setSidebarClass('');
+      setSidebarClass("");
     }
   }, [isSidebarOpen]);
 
@@ -50,7 +60,9 @@ const Sidebar: React.FC = () => {
     <SidebarContext.Provider value={{ isSidebarOpen, toggleSidebar }}>
       <div className={`sidebar ${sidebarClass}`}>
         {/* User info */}
-        <button className="button" onClick={() => setShowModal(true)}>CREATE</button>
+        <button className="button" onClick={() => setShowModal(true)}>
+          CREATE
+        </button>
         <div className="user-info">
           <span className="info-name">Navigation</span>
         </div>
@@ -63,9 +75,15 @@ const Sidebar: React.FC = () => {
                 <a
                   href="#"
                   onClick={() => setCurrentPage(navigationLink.id)} // Modification: Set currentPage to id on click
-                  className={`nav-link ${navigationLink.id === activeLinkIdx ? 'active' : ''}`}
+                  className={`nav-link ${
+                    navigationLink.id === activeLinkIdx ? "active" : ""
+                  }`}
                 >
-                  <img src={navigationLink.image} className="nav-link-icon" alt={navigationLink.title} />
+                  <img
+                    src={navigationLink.image}
+                    className="nav-link-icon"
+                    alt={navigationLink.title}
+                  />
                   <span className="nav-link-text">{navigationLink.title}</span>
                 </a>
               </li>
@@ -75,7 +93,7 @@ const Sidebar: React.FC = () => {
             <li className="nav-item">
               <a
                 href="#"
-                onClick={() => setCurrentPage('read')} // Set to Read page on click
+                onClick={() => setCurrentPage("read")} // Set to Read page on click
                 className="nav-link"
               >
                 <span className="nav-link-text">Read Data</span>
@@ -95,8 +113,10 @@ const Sidebar: React.FC = () => {
 
       {/* Page content: Render different components based on the value of currentPage */}
       <div className="main-content">
-        {currentPage === 'home' && <div>Welcome to the homepage!</div>}
-        {currentPage === 'read' && <Read />} {/* Render Read component when currentPage is read */}
+        {currentPage === "home" && <div>Welcome to the homepage!</div>}
+        {currentPage === "read" && <Read />}{" "}
+        {/* Render Read component when currentPage is read */}
+        {currentPage === "report" && <Report />}{" "}
       </div>
     </SidebarContext.Provider>
   );
