@@ -1,0 +1,51 @@
+/* CashFlowStyle.css */
+
+.cashflow-container {
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.cashflow-title {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+    text-align: center;
+}
+
+.table-container {
+    overflow-x: auto;
+}
+
+.cashflow-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+}
+
+.cashflow-table th,
+.cashflow-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+}
+
+.cashflow-table th {
+    background-color: #f2f2f2;
+    font-weight: bold;
+}
+
+.cashflow-table tr:nth-child(even) {
+    background-color: #f9f9f9;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
