@@ -1,5 +1,6 @@
 // routes/transactionRoutes.js
 import express from "express";
+import mongoose from "mongoose"; // Add this line
 import Transaction from "../models/Transaction.js";
 import getPublicKey from "../services/getPublicKey.js";
 import dotenv from "dotenv";
@@ -11,10 +12,7 @@ const router = express.Router();
 // Update
 router.put("/updateTransaction/:id", async (req, res) => {
   try {
-    // Get database ID
     const { id } = req.params;
-
-    // Get data
     const {
       amount,
       category,
@@ -24,40 +22,41 @@ router.put("/updateTransaction/:id", async (req, res) => {
       merchant,
       paymentMethod,
       timestamp,
+      _id // 确保包含_id
     } = req.body;
 
-    // find and get transactionID
+    // 更详细的验证
+    if (!id) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Transaction ID is required" 
+      });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(id)) {
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid transaction ID format" 
+      });
+    }
+
     const existingTransaction = await Transaction.findById(id);
     if (!existingTransaction) {
-      return res
-        .status(404)
-        .json({ success: false, message: "Transaction not found." });
+      return res.status(404).json({ 
+        success: false, 
+        message: "Transaction not found." 
+      });
     }
 
-    const transactionID = existingTransaction.transactionID;
-
-    // Get public key
-    const publicKey = await getPublicKey(transactionID);
-    if (!publicKey) {
-      console.log("Public key not found for transactionID:", transactionID);
-      return res
-        .status(404)
-        .json({ success: false, message: "Public key not found." });
-    }
-
-    // Verify the amount
+    // 转换数据类型并验证
     const amount_num = Number(amount);
     if (isNaN(amount_num) || amount_num < 0) {
-      console.log("Invalid amount provided:", amount);
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid amount provided." });
+      return res.status(400).json({ 
+        success: false, 
+        message: "Invalid amount provided." 
+      });
     }
 
-    // Convert timestamp to a Date object if provided
-    const timestamp_date = timestamp ? new Date(timestamp) : undefined;
-
-    // Update
     const updateData = {
       amount: amount_num,
       category,
@@ -66,38 +65,34 @@ router.put("/updateTransaction/:id", async (req, res) => {
       notes,
       merchant,
       paymentMethod,
-      publicKey,
+      timestamp: timestamp ? new Date(timestamp) : undefined
     };
 
-    // Time
-    if (timestamp_date) {
-      updateData.timestamp = timestamp_date;
-    }
-
-    // Update
     const updatedTransaction = await Transaction.findByIdAndUpdate(
-      id,
-      updateData,
+      id, 
+      updateData, 
       { new: true }
     );
 
     if (!updatedTransaction) {
-      return res
-        .status(404)
-        .json({
-          success: false,
-          message: "Transaction not found after update.",
-        });
+      return res.status(404).json({ 
+        success: false, 
+        message: "Transaction not found after update" 
+      });
     }
 
     res.status(200).json({
       success: true,
-      message: "Transaction updated successfully!",
-      updatedTransaction,
+      message: "Transaction updated successfully",
+      updatedTransaction
     });
+
   } catch (error) {
     console.error("Error updating transaction:", error);
-    res.status(500).json({ success: false, message: error.message });
+    res.status(500).json({ 
+      success: false, 
+      message: error.message || "Internal server error" 
+    });
   }
 });
 

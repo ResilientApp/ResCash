@@ -7,6 +7,7 @@ import db from "./config/mongodb.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
 import transactionRoutesReport from "./routes/transactionRoutesReport.js";
 import transactionRead from "./routes/transactionRoutesRead.js";
+import transactionRoutesUpdate from "./routes/transactionRoutesUpdate.js";
 
 dotenv.config();
 
@@ -51,3 +52,4 @@ app.listen(port, () => {
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/reports", transactionRoutesReport);
 app.use("/api/read", transactionRead);
+app.use("/api/transactions", transactionRoutesUpdate);

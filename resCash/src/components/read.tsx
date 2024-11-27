@@ -1,25 +1,32 @@
 import React, { useEffect, useState } from 'react';
 import './readStyle.css';
+import TransactionModal from './TransactionModal';
+interface Transaction {
+  _id: string;
+  transactionID: string;
+  timestamp: string;
+  category: string;
+  transactionType: string;
+  merchant: string;
+  paymentMethod: string;
+  amount: number;
+  currency: string;
+  notes: string;
+  is_deleted: boolean;
+}
 
 const Read = () => {
-  const [data, setData] = useState<Array<{
-    transactionID: string;
-    timestamp: string;
-    category: string;
-    transactionType: string;
-    merchant: string;
-    paymentMethod: string;
-    amount: number;
-    currency: string;
-    notes: string;
-  }>>([]);
+  const [data, setData] = useState<Array<Transaction>>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     const fetchUserTransactions = async () => {
       try {
-        const token = sessionStorage.getItem('token'); // Retrieve JWT token
+        // Retrieve JWT token
+        const token = sessionStorage.getItem('token');
         if (!token) {
           throw new Error('No authentication token found');
         }
@@ -62,6 +69,31 @@ const Read = () => {
     return <div>Error: {error}</div>;
   }
 
+  const handleRowClick = (transaction: Transaction) => {
+    setSelectedTransaction(transaction);
+    setShowModal(true);
+  };
+  
+  const handleSave = (updatedTransaction: Transaction) => {
+    // Update the transaction in the data array
+    console.log('handleSave called');
+    setData((prevData) =>
+      prevData.map((transaction) =>
+        transaction._id === updatedTransaction._id ? updatedTransaction : transaction
+      )
+    );
+    handleCloseModal();
+  };
+
+  const handleCloseModal = (wasDeleted = false) => {
+    if (wasDeleted) {
+      // Remove the deleted transaction from the data
+      setData(prevData => prevData.filter(t => t._id !== selectedTransaction?._id));
+    }
+    setShowModal(false);
+    setSelectedTransaction(null);
+  };
+
   return (
     <div className="read-container">
       <h2 className="page-title">Turnover</h2>
@@ -87,7 +119,7 @@ const Read = () => {
               </tr>
             ) : (
               data.map((transaction) => (
-                <tr key={transaction.transactionID}>
+                <tr key={transaction._id} onClick={() => handleRowClick(transaction)}>
                   <td>{transaction.transactionID}</td>
                   <td>{new Date(transaction.timestamp).toLocaleString()}</td>
                   <td>{transaction.category}</td>
@@ -103,6 +135,15 @@ const Read = () => {
           </tbody>
         </table>
       </div>
+
+      {showModal && selectedTransaction && (
+        <TransactionModal
+          transaction={selectedTransaction}
+          onClose={handleCloseModal}
+          onSave={handleSave}
+        />
+      )}
+
     </div>
   );
 };
