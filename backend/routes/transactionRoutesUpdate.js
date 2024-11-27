@@ -1,6 +1,6 @@
 // routes/transactionRoutes.js
 import express from "express";
-import mongoose from "mongoose"; // Add this line
+import mongoose from "mongoose";
 import Transaction from "../models/Transaction.js";
 import getPublicKey from "../services/getPublicKey.js";
 import dotenv from "dotenv";
@@ -22,10 +22,10 @@ router.put("/updateTransaction/:id", async (req, res) => {
       merchant,
       paymentMethod,
       timestamp,
-      _id // 确保包含_id
+      _id // ID of the transaction in the MongoDB collection
     } = req.body;
 
-    // 更详细的验证
+    // Verifies if the ID is provided
     if (!id) {
       return res.status(400).json({ 
         success: false, 
@@ -48,7 +48,7 @@ router.put("/updateTransaction/:id", async (req, res) => {
       });
     }
 
-    // 转换数据类型并验证
+    // Transaction ID from the request body should match the ID in the URL
     const amount_num = Number(amount);
     if (isNaN(amount_num) || amount_num < 0) {
       return res.status(400).json({ 

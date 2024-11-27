@@ -7,10 +7,10 @@ import NotificationModal from "./NotificationModal";
 interface TransactionFormProps {
   onLogout: () => void;
   token: string | null;
-  initialData?: Transaction; // Added initialData prop to receive initial form data
-  onFormChange?: (updatedFields: Partial<Transaction>) => void; // Added onFormChange prop for handling form changes
-  hideSubmitButton?: boolean; // Added prop to control submit button visibility
-  hideHeading?: boolean; // Added prop to control heading visibility
+  initialData?: Transaction;
+  onFormChange?: (updatedFields: Partial<Transaction>) => void;
+  hideSubmitButton?: boolean;
+  hideHeading?: boolean;
 }
 
 interface Transaction {
@@ -29,10 +29,10 @@ interface Transaction {
 const TransactionForm: React.FC<TransactionFormProps> = ({
   onLogout,
   token,
-  initialData, // Added initialData
-  onFormChange, // Added onFormChange
-  hideSubmitButton, // Added hideSubmitButton
-  hideHeading, // Added hideHeading
+  initialData,
+  onFormChange,
+  hideSubmitButton,
+  hideHeading,
 }) => {
   const recipientAddress: string =
     "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";

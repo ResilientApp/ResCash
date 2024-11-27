@@ -31,24 +31,24 @@ const Read = () => {
           throw new Error('No authentication token found');
         }
     
-        const response = await fetch('http://localhost:8099/api/read/userTransactions', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-          },
-        });
+      const response = await fetch('http://localhost:8099/api/read/userTransactions', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+        },
+      });
     
-        if (!response.ok) {
-          throw new Error(`Network response failed, status code: ${response.status}`);
-        }
+      if (!response.ok) {
+        throw new Error(`Network response failed, status code: ${response.status}`);
+      }
     
-        const result = await response.json(); // Parse the JSON response
-        if (result.message === 'No transactions found') {
-          setData([]); // Set an empty array to indicate no transactions
-        } else {
-          setData(result); // Set the fetched transactions into state
-        }
+      const result = await response.json(); // Parse the JSON response
+      if (result.message === 'No transactions found') {
+        setData([]); // Set an empty array to indicate no transactions
+      } else {
+        setData(result); // Set the fetched transactions into state
+      }
       } catch (err: any) {
         console.error('Data retrieval error:', err);
         setError(err.message);
@@ -57,7 +57,8 @@ const Read = () => {
       }
     };
   
-    fetchUserTransactions(); // Fetch user-specific transactions on component mount
+    // Fetch user-specific transactions on component mount
+    fetchUserTransactions();
   }, []);
   
 
@@ -75,6 +76,7 @@ const Read = () => {
   };
   
   const handleSave = (updatedTransaction: Transaction) => {
+
     // Update the transaction in the data array
     console.log('handleSave called');
     setData((prevData) =>
@@ -87,6 +89,7 @@ const Read = () => {
 
   const handleCloseModal = (wasDeleted = false) => {
     if (wasDeleted) {
+      
       // Remove the deleted transaction from the data
       setData(prevData => prevData.filter(t => t._id !== selectedTransaction?._id));
     }
