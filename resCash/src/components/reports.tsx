@@ -1,6 +1,24 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
 
+const expenseCategories = [
+  "Housing",
+  "Utilities",
+  "Food",
+  "Transportation",
+  "Entertainment",
+  "Healthcare",
+];
+
+const incomeCategories = [
+  "Employment",
+  "Business",
+  "Investments",
+  "Rentals",
+  "Gifts/Donations",
+  "Miscellaneous",
+];
+
 const Report = () => {
   const [categorySummary, setCategorySummary] = useState([]);
   const [summary, setSummary] = useState({ totalTransactions: 0, netWorth: 0 });
@@ -92,12 +110,29 @@ const Report = () => {
     return <div>Error: {error}</div>;
   }
 
+  const sortedExpenseSummary = categorySummary
+    .filter((item: any) => expenseCategories.includes(item._id))
+    .sort((a: any, b: any) => b.totalAmount - a.totalAmount);
+
+  const sortedIncomeSummary = categorySummary
+    .filter((item: any) => incomeCategories.includes(item._id))
+    .sort((a: any, b: any) => b.totalAmount - a.totalAmount);
+
   return (
     <div className="report-container">
       <div className="column">
         <h2>Summary by Category</h2>
+        <h3>Expense</h3>
         <ul>
-          {categorySummary.map((item: any, index: number) => (
+          {sortedExpenseSummary.map((item: any, index: number) => (
+            <li key={index}>
+              {item._id}: {item.totalAmount.toFixed(2)}
+            </li>
+          ))}
+        </ul>
+        <h3>Income</h3>
+        <ul>
+          {sortedIncomeSummary.map((item: any, index: number) => (
             <li key={index}>
               {item._id}: {item.totalAmount.toFixed(2)}
             </li>
