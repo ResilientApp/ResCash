@@ -38,10 +38,13 @@ export async function getCategorySummary(token) {
 export async function getAllSummary(token) {
   const transactions = await fetchTransactions(token);
   const totalTransactions = transactions.length;
-  const netWorth = transactions.reduce(
-    (acc, transaction) => acc + transaction.amount,
-    0
-  );
+  const totalIncome = transactions
+    .filter(transaction => transaction.transactionType === 'Income')
+    .reduce((acc, transaction) => acc + transaction.amount, 0);
+  const totalExpense = transactions
+    .filter(transaction => transaction.transactionType === 'Expense')
+    .reduce((acc, transaction) => acc + transaction.amount, 0);
+  const netWorth = totalIncome - totalExpense;
   return { totalTransactions, netWorth };
 }
 

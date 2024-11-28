@@ -28,9 +28,9 @@
 }
 
 .form-control {
-  background-color: #1a1a2e;
-  color: #ffffff;
-  border-color: #4e4e68;
+  background-color: #1a1a2e; /* Set your desired background color */
+  color: #ffffff; /* Set your desired text color */
+  border: 1px solid #4e4e68; /* Set your desired border color */
   padding: 10px;
   border-radius: 5px;
   width: 100%;
@@ -39,13 +39,15 @@
 }
 
 .form-control:focus {
-  border-color: #80bdff;
-  box-shadow: 0 0 8px rgba(128, 189, 255, 0.5);
-  outline: none;
+  background-color: #1a1a2e; /* Ensure the background color stays the same on focus */
+  color: #ffffff; /* Ensure the text color stays the same on focus */
+  border-color: #80bdff; /* Optional: Change border color on focus */
+  box-shadow: 0 0 8px rgba(128, 189, 255, 0.5); /* Optional: Add a shadow on focus */
+  outline: none; /* Remove the default outline */
 }
 
 .form-control::placeholder {
-  color: #b0b0b0;
+  color: #b0b0b0; /* Set your desired placeholder color */
 }
 
 .button {

@@ -26,6 +26,24 @@ interface Transaction {
   is_deleted: boolean;
 }
 
+const expenseCategories = [
+  "Housing",
+  "Utilities",
+  "Food",
+  "Transportation",
+  "Entertainment",
+  "Healthcare",
+];
+
+const incomeCategories = [
+  "Employment",
+  "Business",
+  "Investments",
+  "Rentals",
+  "Gifts/Donations",
+  "Miscellaneous",
+];
+
 const TransactionForm: React.FC<TransactionFormProps> = ({
   onLogout,
   token,
@@ -36,17 +54,40 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 }) => {
   const recipientAddress: string =
     "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
-  const [amount, setAmount] = useState<string>(initialData?.amount.toString() || "");
+  const [amount, setAmount] = useState<string>(
+    initialData?.amount.toString() || ""
+  );
   const [category, setCategory] = useState<string>(initialData?.category || "");
-  const [currency, setCurrency] = useState<string>(initialData?.currency || "");
-  const [transactionType, setTransactionType] = useState<string>(initialData?.transactionType || "Expense");
+  const [currency, setCurrency] = useState<string>(
+    initialData?.currency || "USD"
+  );
+  const [transactionType, setTransactionType] = useState<string>(
+    initialData?.transactionType || "Expense"
+  );
   const [notes, setNotes] = useState<string>(initialData?.notes || "");
   const [merchant, setMerchant] = useState<string>(initialData?.merchant || "");
-  const [paymentMethod, setPaymentMethod] = useState<string>(initialData?.paymentMethod || "Card");
-  const [timestamp, setTimestamp] = useState<string>(initialData?.timestamp || new Date().toISOString());
+  const [paymentMethod, setPaymentMethod] = useState<string>(
+    initialData?.paymentMethod || "Card"
+  );
+  const [timestamp, setTimestamp] = useState<string>(
+    initialData?.timestamp || new Date().toISOString()
+  );
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
+
+  const handleTransactionTypeChange = (e: any) => {
+    const type = e.target.value;
+    setTransactionType(type);
+    setCategory(""); // Reset category when transaction type changes
+    onFormChange && onFormChange({ transactionType: type, category: "" });
+  };
+
+  const handleCategoryChange = (e: any) => {
+    const selectedCategory = e.target.value;
+    setCategory(selectedCategory);
+    onFormChange && onFormChange({ category: selectedCategory });
+  };
 
   const sdkRef = useRef<ResVaultSDK | null>(null);
 
@@ -68,7 +109,17 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         timestamp,
       });
     }
-  }, [amount, category, currency, transactionType, notes, merchant, paymentMethod, timestamp, onFormChange]);
+  }, [
+    amount,
+    category,
+    currency,
+    transactionType,
+    notes,
+    merchant,
+    paymentMethod,
+    timestamp,
+    onFormChange,
+  ]);
 
   useEffect(() => {
     const sdk = sdkRef.current;
@@ -218,7 +269,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               value={amount}
               onChange={(e) => {
                 setAmount(e.target.value);
-                onFormChange && onFormChange({ amount: parseFloat(e.target.value) });
+                onFormChange &&
+                  onFormChange({ amount: parseFloat(e.target.value) });
               }}
             />
           </div>
@@ -226,31 +278,41 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           <div className="form-group mb-3">
             <select
               className="form-control"
+              value={transactionType}
+              onChange={handleTransactionTypeChange}
+            >
+              <option value="Expense">Expense</option>
+              <option value="Income">Income</option>
+            </select>
+          </div>
+
+          <div className="form-group mb-3">
+            <select
+              className="form-control"
               value={category}
-              onChange={(e) => {
-                setCategory(e.target.value);
-                onFormChange && onFormChange({ category: e.target.value });
-              }}
+              onChange={handleCategoryChange}
             >
               <option value="" disabled>
                 Select category
               </option>
-              <optgroup label="Expense Categories">
-                <option value="Housing">Housing</option>
-                <option value="Utilities">Utilities</option>
-                <option value="Food">Food</option>
-                <option value="Transportation">Transportation</option>
-                <option value="Entertainment">Entertainment</option>
-                <option value="Healthcare">Healthcare</option>
-              </optgroup>
-              <optgroup label="Income Categories">
-                <option value="Employment">Employment</option>
-                <option value="Business">Business</option>
-                <option value="Investments">Investments</option>
-                <option value="Rentals">Rentals</option>
-                <option value="Gifts/Donations">Gifts/Donations</option>
-                <option value="Miscellaneous">Miscellaneous</option>
-              </optgroup>
+              {transactionType === "Expense" && (
+                <optgroup label="Expense Categories">
+                  {expenseCategories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
+              {transactionType === "Income" && (
+                <optgroup label="Income Categories">
+                  {incomeCategories.map((cat) => (
+                    <option key={cat} value={cat}>
+                      {cat}
+                    </option>
+                  ))}
+                </optgroup>
+              )}
             </select>
           </div>
 
@@ -259,13 +321,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               className="form-control"
               value={currency}
               onChange={(e) => {
-                setCurrency(e.target.value);
-                onFormChange && onFormChange({ currency: e.target.value });
+                const selectedCurrency = e.target.value;
+                setCurrency(selectedCurrency);
+                onFormChange && onFormChange({ currency: selectedCurrency });
               }}
             >
-              <option value="" disabled>
-                Select currency
-              </option>
               <option value="USD">USD - United States Dollar</option>
               <option value="EUR">EUR - Euro</option>
               <option value="JPY">JPY - Japanese Yen</option>
@@ -276,20 +336,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               <option value="CNY">CNY - Chinese Yuan</option>
               <option value="SEK">SEK - Swedish Krona</option>
               <option value="NZD">NZD - New Zealand Dollar</option>
-            </select>
-          </div>
-
-          <div className="form-group mb-3">
-            <select
-              className="form-control"
-              value={transactionType}
-              onChange={(e) => {
-                setTransactionType(e.target.value);
-                onFormChange && onFormChange({ transactionType: e.target.value });
-              }}
-            >
-              <option value="Expense">Expense</option>
-              <option value="Income">Income</option>
             </select>
           </div>
 

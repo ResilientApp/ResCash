@@ -99,7 +99,7 @@ const Report = () => {
         <ul>
           {categorySummary.map((item: any, index: number) => (
             <li key={index}>
-              {item._id}: {item.totalAmount}
+              {item._id}: {item.totalAmount.toFixed(2)}
             </li>
           ))}
         </ul>
@@ -108,17 +108,17 @@ const Report = () => {
         <h2>Summary</h2>
         <ul>
           <li>Total Transactions: {summary.totalTransactions}</li>
-          <li>Net Worth: {summary.netWorth}</li>
+          <li>Net Worth: {summary.netWorth.toFixed(2)}</li>
         </ul>
         <h2>Expense Summary</h2>
         <ul>
-          <li>Total Expense: {expenseSummary.totalExpense}</li>
-          <li>Average Expense: {expenseSummary.averageExpense}</li>
+          <li>Total Expense: {expenseSummary.totalExpense.toFixed(2)}</li>
+          <li>Average Expense: {expenseSummary.averageExpense.toFixed(2)}</li>
         </ul>
         <h2>Income Summary</h2>
         <ul>
-          <li>Total Income: {incomeSummary.totalIncome}</li>
-          <li>Average Income: {incomeSummary.averageIncome}</li>
+          <li>Total Income: {incomeSummary.totalIncome.toFixed(2)}</li>
+          <li>Average Income: {incomeSummary.averageIncome.toFixed(2)}</li>
         </ul>
       </div>
     </div>
