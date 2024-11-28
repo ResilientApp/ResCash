@@ -3,21 +3,56 @@ import "../App.css";
 
 const Report = () => {
   const [categorySummary, setCategorySummary] = useState([]);
-  const [summary, setSummary] = useState([]);
-  const [expenseSummary, setExpenseSummary] = useState([]);
-  const [incomeSummary, setIncomeSummary] = useState([]);
+  const [summary, setSummary] = useState({ totalTransactions: 0, netWorth: 0 });
+  const [expenseSummary, setExpenseSummary] = useState({
+    totalExpense: 0,
+    averageExpense: 0,
+  });
+  const [incomeSummary, setIncomeSummary] = useState({
+    totalIncome: 0,
+    averageIncome: 0,
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchData = async () => {
       try {
+        const token = sessionStorage.getItem("token"); // Retrieve the token from session storage
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
         const [categoryRes, summaryRes, expenseRes, incomeRes] =
           await Promise.all([
-            fetch("http://localhost:8099/api/reports/categorySummary"),
-            fetch("http://localhost:8099/api/reports/summary"),
-            fetch("http://localhost:8099/api/reports/expenseSummary"),
-            fetch("http://localhost:8099/api/reports/incomeSummary"),
+            fetch("http://localhost:8099/api/reports/categorySummary", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+              },
+            }),
+            fetch("http://localhost:8099/api/reports/summary", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+              },
+            }),
+            fetch("http://localhost:8099/api/reports/expenseSummary", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+              },
+            }),
+            fetch("http://localhost:8099/api/reports/incomeSummary", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+              },
+            }),
           ]);
 
         if (
@@ -72,27 +107,18 @@ const Report = () => {
       <div className="column">
         <h2>Summary</h2>
         <ul>
-          {summary.map((item: any, index: number) => (
-            <li key={index}>
-              {item._id}: {item.totalAmount}
-            </li>
-          ))}
+          <li>Total Transactions: {summary.totalTransactions}</li>
+          <li>Net Worth: {summary.netWorth}</li>
         </ul>
         <h2>Expense Summary</h2>
         <ul>
-          {expenseSummary.map((item: any, index: number) => (
-            <li key={index}>
-              {item._id}: {item.totalAmount}
-            </li>
-          ))}
+          <li>Total Expense: {expenseSummary.totalExpense}</li>
+          <li>Average Expense: {expenseSummary.averageExpense}</li>
         </ul>
         <h2>Income Summary</h2>
         <ul>
-          {incomeSummary.map((item: any, index: number) => (
-            <li key={index}>
-              {item._id}: {item.totalAmount}
-            </li>
-          ))}
+          <li>Total Income: {incomeSummary.totalIncome}</li>
+          <li>Average Income: {incomeSummary.averageIncome}</li>
         </ul>
       </div>
     </div>

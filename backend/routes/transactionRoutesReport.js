@@ -11,7 +11,8 @@ const router = express.Router();
 // Endpoint for category summary
 router.get("/categorySummary", async (req, res) => {
   try {
-    const summary = await getCategorySummary();
+    const token = req.headers.authorization.split(" ")[1]; // Extract the token from the Authorization header
+    const summary = await getCategorySummary(token);
     res.json(summary);
   } catch (error) {
     console.error("Error fetching category summary:", error);
@@ -22,7 +23,8 @@ router.get("/categorySummary", async (req, res) => {
 // Endpoint for summary (all summary)
 router.get("/summary", async (req, res) => {
   try {
-    const summary = await getAllSummary();
+    const token = req.headers.authorization.split(" ")[1]; // Extract the token from the Authorization header
+    const summary = await getAllSummary(token);
     res.json(summary);
   } catch (error) {
     console.error("Error fetching summary:", error);
@@ -33,7 +35,8 @@ router.get("/summary", async (req, res) => {
 // Endpoint for expense summary
 router.get("/expenseSummary", async (req, res) => {
   try {
-    const summary = await getExpenseSummary();
+    const token = req.headers.authorization.split(" ")[1]; // Extract the token from the Authorization header
+    const summary = await getExpenseSummary(token);
     res.json(summary);
   } catch (error) {
     console.error("Error fetching expense summary:", error);
@@ -44,7 +47,8 @@ router.get("/expenseSummary", async (req, res) => {
 // Endpoint for income summary
 router.get("/incomeSummary", async (req, res) => {
   try {
-    const summary = await getIncomeSummary();
+    const token = req.headers.authorization.split(" ")[1]; // Extract the token from the Authorization header
+    const summary = await getIncomeSummary(token);
     res.json(summary);
   } catch (error) {
     console.error("Error fetching income summary:", error);
