@@ -188,7 +188,7 @@
   padding: 10px 20px;
   background-color: rgba(26, 26, 46, 0.9);
   color: #f8f9fa;
-  position: sticky; /* 固定在页面顶部 */
+  position: sticky;
   top: 0;
   width: 100%;
   z-index: 1000;
@@ -218,17 +218,29 @@
   z-index: 1000;
 }
 
+.sidebar ul {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+
 .sidebar-item {
   margin: 10px 0;
   font-size: 18px;
   color: #b0b0b0;
   cursor: pointer;
+  padding: 8px 15px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  display: block;
+  text-decoration: none;
 }
 
 .sidebar-item.active,
 .sidebar-item:hover {
   color: #ffffff;
   font-weight: bold;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
 .content {
@@ -271,4 +283,69 @@
 
 .column li {
   margin-bottom: 10px;
+}
+
+/* Add to App.css */
+.user-info {
+  padding: 15px 0;
+  margin-bottom: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.info-name {
+  color: #f8f9fa;
+  font-size: 16px;
+  font-weight: 500;
+  word-break: break-all;
+}
+
+.extension-popup {
+  position: fixed !important;
+  z-index: 10000 !important;
+}
+
+.modal-dialog {
+  z-index: 9000;
+}
+
+.modal-backdrop {
+  z-index: 8000;
+}
+
+.modal {
+  z-index: 8500;
+}
+
+.sidebar {
+  z-index: 1000;
+}
+
+.header {
+  z-index: 1000;
+}
+
+.extension-popup {
+  pointer-events: auto !important;
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+.info-container {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.info-label {
+  color: #b0b0b0;
+  font-size: 14px;
+}
+
+.info-name {
+  color: #f8f9fa;
+  font-size: 16px;
+  font-weight: 500;
+  word-break: break-all;
 }

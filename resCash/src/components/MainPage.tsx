@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../App.css";
+import Modal from "react-bootstrap/Modal";
 import Sidebar from "./Sidebar";
 import TransactionForm from "./TransactionForm"; // Form component
 import NotificationModal from "./NotificationModal"; // Modal component
@@ -24,16 +25,47 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
   const [showModal, setShowModal] = useState(false);
+  const [showTransactionModal, setShowTransactionModal] = useState(false);
   const [currentPage, setCurrentPage] = useState<string>("home"); // Modification: Used to control the displayed page state
+  const [publicKey, setPublicKey] = useState<string>("");
+
+  useEffect(() => {
+    const storedKey = sessionStorage.getItem('publicKey');
+    if (storedKey) {
+      // Show first 8 characters of public key
+      setPublicKey(storedKey.substring(0, 8) + "...");
+    }
+  }, []);
+
+  const handleCloseModal = () => {
+    setShowTransactionModal(false);
+  };
 
   return (
     <div className="page-container">
+      {/* CSS Injection to make sure the resValut popup window stay at the top of the layers */}
+      <style>
+        {`
+          .extension-popup {
+            z-index: 9999 !important;
+          }
+          
+          .modal {
+            z-index: 1050;
+          }
+        
+          .modal-backdrop {
+            z-index: 1040;
+          }
+        `}
+      </style>
+      
       {/* Top navigation bar */}
       <header className="header">
         <div className="logoBox">
           <div className="logo-placeholder" />
         </div>
-        <h1 className="header-title">Home Page</h1>
+        <h1 className="header-title">ResCash</h1>
         <button
           type="button"
           className="btn btn-danger logout-button"
@@ -47,7 +79,18 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
       <div className="main-content">
         {/* Sidebar */}
         <nav className="sidebar">
-          <button className="button" onClick={() => setShowModal(true)}>
+            
+          {/* User info section */}
+          <div className="user-info">
+            <div className="info-container">
+              <span className="info-label">Current Account: </span>
+              <div className="info-name">
+                {publicKey || "Current User"}
+              </div>
+            </div>
+          </div>
+
+          <button className="button" onClick={() => setShowTransactionModal(true)}>
             CREATE
           </button>
           <ul>
@@ -91,13 +134,19 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
         </div>
       </div>
 
-      {/* Modal and loader */}
-      <NotificationModal
-        show={showModal}
-        title="Notification Title"
-        message="This is a notification message."
-        onClose={() => setShowModal(false)}
-      />
+      {/* Transaction Form Modal */}
+      <Modal show={showTransactionModal} onHide={handleCloseModal}>
+        <Modal.Header closeButton>
+          <Modal.Title>Create New Transaction</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <TransactionForm 
+            onLogout={onLogout}
+            token={token}
+            hideHeading={true}
+          />
+        </Modal.Body>
+      </Modal>
     </div>
   );
 };
