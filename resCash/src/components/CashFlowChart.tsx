@@ -37,17 +37,27 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         // Clear previous content
         ctx.clearRect(0, 0, width, height);
 
+        // Limit data to the last 30 entries
+        const filteredData = data.slice(-30);
+
         // Set margins
         const margin = { top: 20, right: 30, bottom: 80, left: 60 };
         const chartWidth = width - margin.left - margin.right;
         const chartHeight = height - margin.top - margin.bottom;
 
         // Extract data
-        const labels = data.map((transaction) =>
-            new Date(transaction.timestamp).toLocaleString('en-US', { month: 'short', year: 'numeric' })
+        const labels = filteredData.map((transaction) => {
+            const date = new Date(transaction.timestamp);
+            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Format month as 2-digit
+            const day = date.getDate().toString().padStart(2, '0'); // Format day as 2-digit
+            return `${month}-${day}`; // Format as "MM-DD"
+        });
+        const incomes = filteredData.map((transaction) =>
+            transaction.transactionType === 'Income' ? transaction.amount : 0
         );
-        const incomes = data.map((transaction) => (transaction.transactionType === 'Income' ? transaction.amount : 0));
-        const expenses = data.map((transaction) => (transaction.transactionType === 'Expense' ? transaction.amount : 0));
+        const expenses = filteredData.map((transaction) =>
+            transaction.transactionType === 'Expense' ? transaction.amount : 0
+        );
         const netCashFlow = incomes.map((income, index) => income - expenses[index]);
 
         // Set X and Y axis scales
@@ -58,8 +68,12 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         const xStep = chartWidth / labels.length;
         const yScale = chartHeight / (maxY - minY);
 
+        // Set background color
+        ctx.fillStyle = '#1e1e2f'; // Dark background
+        ctx.fillRect(0, 0, width, height);
+
         // Draw grid lines and Y axis ticks
-        ctx.strokeStyle = '#e0e0e0';
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; // Light grid lines
         ctx.lineWidth = 1;
         for (let i = 0; i <= 5; i++) {
             const y = margin.top + chartHeight - (chartHeight / 5) * i;
@@ -70,7 +84,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         }
 
         // Draw X and Y axes
-        ctx.strokeStyle = '#000';
+        ctx.strokeStyle = '#ffffff'; // White axis
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(margin.left, margin.top + chartHeight);
@@ -100,7 +114,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
 
         // Draw line chart - Net Cash Flow
         ctx.beginPath();
-        ctx.strokeStyle = 'rgba(0, 102, 204, 1)';
+        ctx.strokeStyle = 'rgba(0, 102, 204, 1)'; // Line color
         ctx.lineWidth = 2;
 
         netCashFlow.forEach((value, index) => {
@@ -126,7 +140,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         });
 
         // Add X axis labels, rotate to avoid overlap
-        ctx.fillStyle = '#000';
+        ctx.fillStyle = '#ffffff'; // White text
         ctx.font = '12px Arial';
         ctx.textAlign = 'right';
         labels.forEach((label, index) => {
@@ -146,9 +160,28 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
             const y = margin.top + chartHeight - (chartHeight / 5) * i;
             ctx.fillText(yValue.toString(), margin.left - 10, y + 4);
         }
+
+        // Add legend to the right
+        const legendX = width - 120; // Legend box X position
+        const legendY = margin.top; // Legend box Y position
+        ctx.fillStyle = '#ffffff';
+        ctx.font = '14px Arial';
+
+        // Income (green)
+        ctx.fillStyle = 'rgba(75, 192, 192, 0.8)';
+        ctx.fillRect(legendX, legendY, 20, 20);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('Income', legendX + 30, legendY + 15);
+
+        // Expense (red)
+        ctx.fillStyle = 'rgba(255, 99, 132, 0.8)';
+        ctx.fillRect(legendX, legendY + 30, 20, 20);
+        ctx.fillStyle = '#ffffff';
+        ctx.fillText('Expense', legendX + 30, legendY + 45);
     }, [data]);
 
     return <canvas ref={canvasRef}></canvas>;
 };
 
 export default CashFlowChart;
+
