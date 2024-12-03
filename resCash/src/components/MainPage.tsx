@@ -7,15 +7,15 @@ import NotificationModal from "./NotificationModal"; // Modal component
 import Read from "./read"; // Import Read component
 import CashFlow from "./CashFlow"; // Import CashFlow component
 import Report from "./reports";
-// import {
-//   Chart as ChartJS,
-//   LineElement,
-//   CategoryScale,
-//   LinearScale,
-//   PointElement,
-// } from "chart.js";
+import {
+  Chart as ChartJS,
+  LineElement,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+} from "chart.js";
 
-// ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
+ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 // Define the type for props
 interface MainLayoutProps {
@@ -119,7 +119,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
               Report
             </li>
             <li className="sidebar-item">Visualization</li>
-            <li className="sidebar-item">Cash Flow</li>
+            <li 
+              className={`sidebar-item ${
+                currentPage === 'cashflow' ? 'active' : ""
+              }`}
+              onClick={() => setCurrentPage('cashflow')}
+            >
+              Cash Flow
+            </li>
           </ul>
         </nav>
 
@@ -130,6 +137,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
           )}
           {currentPage === "turnover" && <Read />}{" "}
           {currentPage === "report" && <Report />}{" "}
+          {currentPage === "cashflow" && <CashFlow />}
           {/* Modification: Display the Read component based on currentPage */}
         </div>
       </div>

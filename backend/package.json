@@ -13,8 +13,10 @@
   "description": "",
   "dependencies": {
     "@apollo/client": "^3.11.8",
+    "@types/chart.js": "^2.9.41",
     "apollo-server": "^3.13.0",
     "body-parser": "^1.20.3",
+    "chart.js": "^4.4.7",
     "cors": "^2.8.5",
     "cross-fetch": "^4.0.0",
     "dotenv": "^16.4.5",
