@@ -2,7 +2,6 @@
 import express from "express";
 import mongoose from "mongoose";
 import Transaction from "../models/Transaction.js";
-import getPublicKey from "../services/getPublicKey.js";
 import dotenv from "dotenv";
 
 dotenv.config();

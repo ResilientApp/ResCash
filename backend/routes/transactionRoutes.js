@@ -1,6 +1,7 @@
 import express from "express";
 import Transaction from "../models/Transaction.js";
-import getPublicKey from "../services/getPublicKey.js";
+import { getPublicKey} from '../services/getPublicKey.js';
+
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 

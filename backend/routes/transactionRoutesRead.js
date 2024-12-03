@@ -3,6 +3,7 @@ import Transaction from "../models/Transaction.js";
 import fetch from "cross-fetch"; // Required for making GraphQL requests
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
+import { fetchTransactionsByPublicKey } from "../services/getPublicKey.js";
 
 dotenv.config();
 
@@ -39,25 +40,62 @@ const authenticate = (req, res, next) => {
 
 
 // Route to fetch user-specific transactions
-router.get('/userTransactions', authenticate, async (req, res) => {
+router.get("/userTransactions", authenticate, async (req, res) => {
+  console.log(`New request to /userTransactions at ${new Date().toISOString()}`);
+
   const publicKey = req.publicKey;
 
   try {
-    // Fetch transactions from MongoDB for the logged-in user
-    const transactions = await Transaction.find({ publicKey });
+    // Step 1: Fetch transactions from ResilientDB using GraphQL
+    const graphqlQuery = {
+      query: `
+      query GetFilteredTransactions {
+        getFilteredTransactions(filter: { ownerPublicKey: "${publicKey}", recipientPublicKey: "" }) {
+          asset
+          id
+        }
+      }
+    `,
+  };
+  console.log("Sending GraphQL query to ResilientDB...");
+    const response = await fetch(RESILIENTDB_GRAPHQL_URI, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(graphqlQuery),
+    });
 
-    if (!transactions || transactions.length === 0) {
-      // Return a response indicating no transactions found
-      return res.status(200).json({ message: 'No transactions found', transactions: [] });
+    if (!response.ok) {
+      throw new Error(`Failed to fetch transactions from ResilientDB: ${response.statusText}`);
     }
 
-    // Return the transactions if found
-    return res.status(200).json(transactions);
+    const data = await response.json();
+    console.log("ResilientDB Response:", JSON.stringify(data, null, 2));
+ 
+    if (!data.data || !data.data.getFilteredTransactions) {
+      console.error("Unexpected ResilientDB response structure:", data.errors || "No data");
+      return res.status(500).json({ message: "Unexpected response structure from ResilientDB." });
+    }
+
+// Safely filter transactions without relying on `is_deleted`
+const validTransactions = data.data.getFilteredTransactions || [];
+    if (!validTransactions.length) {
+      console.error("No valid transactions returned from ResilientDB.");
+      return res.status(404).json({ message: "No transactions found." });
+    }
+
+const transactionIDs = validTransactions.map((transaction) => transaction.id);
+
+    // Step 3: Fetch corresponding transactions from MongoDB
+    const mongoTransactions = await Transaction.find({
+      transactionID: { $in: transactionIDs },
+    });
+
+    res.status(200).json(mongoTransactions); // Return transactions to the frontend
   } catch (error) {
-    console.error('Error fetching user transactions:', error);
-    return res.status(500).json({ message: 'Internal server error' });
+    console.error("Error fetching user transactions:", error);
+    res.status(500).json({ message: error.message });
   }
 });
-
-
 export default router;
