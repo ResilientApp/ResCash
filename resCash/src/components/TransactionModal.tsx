@@ -142,7 +142,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
                 Delete
             </Button>
             <Button variant="primary" onClick={handleSave}>
-            Save Changes
+                Save Changes
             </Button>
         </Modal.Footer>
         </Modal>

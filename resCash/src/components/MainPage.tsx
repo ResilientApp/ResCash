@@ -7,15 +7,15 @@ import NotificationModal from "./NotificationModal"; // Modal component
 import Read from "./read"; // Import Read component
 import CashFlow from "./CashFlow"; // Import CashFlow component
 import Report from "./reports";
-import {
-  Chart as ChartJS,
-  LineElement,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-} from "chart.js";
+// import {
+//   Chart as ChartJS,
+//   LineElement,
+//   CategoryScale,
+//   LinearScale,
+//   PointElement,
+// } from "chart.js";
 
-ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
+// ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 // Define the type for props
 interface MainLayoutProps {
