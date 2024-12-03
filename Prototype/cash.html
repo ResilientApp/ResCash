@@ -284,6 +284,46 @@
         </div>
       </div>
     </div>
+
+  <canvas id="netWorthChart" width="400" height="200"></canvas>
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      var ctx = document.getElementById('netWorthChart').getContext('2d');
+      
+      // Sample data for net worth over time
+      var netWorthData = [1000, 1200, 1500, 1300, 1600, 1800];
+      var labels = ['January', 'February', 'March', 'April', 'May', 'June']; // Replace with actual dates
+      
+      var netWorthChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: 'Net Worth',
+            data: netWorthData,
+            borderColor: 'rgba(75, 192, 192, 1)',
+            fill: false,
+          }],
+        },
+        options: {
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Time',
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Net Worth ($)',
+              },
+            },
+          },
+        },
+      });
+    });
+    </script>
     <script src="resources/scripts/axure/ios.js"></script>
   </body>
 </html>
