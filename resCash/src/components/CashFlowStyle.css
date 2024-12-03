@@ -2,50 +2,70 @@
 
 .cashflow-container {
     padding: 20px;
-    background-color: #ffffff;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background-color: #1e1e2f; /* Dark background for the container */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Enhanced shadow effect */
     margin: 20px;
     max-width: 800px;
     margin-left: auto;
     margin-right: auto;
+    color: #ffffff; /* Default text color set to white */
 }
 
 .cashflow-title {
     font-size: 24px;
     margin-bottom: 20px;
-    color: #333;
-    text-align: center;
+    color: #ffffff; /* Title text color set to white */
+    text-align: center; /* Center-align the title */
 }
 
 .table-container {
-    overflow-x: auto;
+    overflow-x: auto; /* Allow horizontal scrolling if needed */
 }
 
 .cashflow-table {
     width: 100%;
-    border-collapse: collapse;
+    border-collapse: collapse; /* Remove space between table cells */
     margin-bottom: 20px;
+    background-color: #2d2d3f; /* Background color for the table */
 }
 
 .cashflow-table th,
 .cashflow-table td {
-    border: 1px solid #ddd;
+    border: 1px solid #444; /* Dark border for cells */
     padding: 12px;
-    text-align: left;
+    text-align: left; /* Left-align the text in cells */
+    color: #ffffff; /* Text color for table cells set to white */
 }
 
 .cashflow-table th {
-    background-color: #f2f2f2;
-    font-weight: bold;
+    background-color: #3a3a4f; /* Background color for table headers */
+    font-weight: bold; /* Bold font for table headers */
+    color: #ffffff; /* Text color for table headers set to white */
 }
 
 .cashflow-table tr:nth-child(even) {
-    background-color: #f9f9f9;
+    background-color: #292939; /* Background color for even rows */
+}
+
+.cashflow-table tr:hover {
+    background-color: #3e3e5a; /* Highlight background color when hovering over rows */
 }
 
 .error-message {
-    color: red;
-    font-weight: bold;
-    text-align: center;
+    color: #ff4d4f; /* Red color for error messages */
+    font-weight: bold; /* Bold font for error messages */
+    text-align: center; /* Center-align the error message */
 }
+
+/* Axis labels and tick marks */
+.axis-label,
+.tick-label {
+    fill: #ffffff; /* Ensure axis labels and tick marks are white */
+    color: #ffffff; /* For text-based axis labels */
+}
+
+.chart-legend {
+    color: #ffffff; /* Ensure chart legend text is white */
+}
+
