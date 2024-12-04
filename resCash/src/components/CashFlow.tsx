@@ -23,7 +23,7 @@ const CashFlow: React.FC = () => {
     useEffect(() => {
         const fetchCashFlowData = async () => {
             try {
-                const response = await fetch('http://localhost:8099/api/transactions/');
+                const response = await fetch('http://localhost:8099/api/read/userTransactions');
                 if (!response.ok) {
                     throw new Error('Failed to fetch cash flow data');
                 }
