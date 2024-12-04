@@ -8,7 +8,7 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 
 const router = express.Router();
-const JWT_SECRET = process.env.JWT_SECRET;
+const JWT_SECRET = 'h@G7#29s*&ZfJx3M!1qN$X2L@jP9kQ%y5T';
 
 // Add login route
 router.post("/login", async (req, res) => {

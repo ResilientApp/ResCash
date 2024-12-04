@@ -27,6 +27,7 @@ const Read = () => {
       try {
         // Retrieve JWT token
         const token = sessionStorage.getItem('token');
+        setLoading(true); // Ensure loading state is active while fetching data
         if (!token) {
           throw new Error('No authentication token found');
         }

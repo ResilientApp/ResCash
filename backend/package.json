@@ -31,6 +31,8 @@
     "node-fetch": "^3.3.2",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
-    "uuid": "^11.0.2"
+    "resilient-node-cache": "^1.0.1",
+    "uuid": "^11.0.2",
+    "ws": "^8.18.0"
   }
 }
