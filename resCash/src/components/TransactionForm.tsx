@@ -10,6 +10,8 @@ interface TransactionFormProps {
   onFormChange?: (updatedFields: Partial<Transaction>) => void;
   hideSubmitButton?: boolean;
   hideHeading?: boolean;
+  onSdkOpen?: () => void;
+  onSdkComplete?: () => void;
 }
 
 interface Transaction {
@@ -49,6 +51,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   onFormChange,
   hideSubmitButton,
   hideHeading,
+  onSdkOpen,
+  onSdkComplete,
 }) => {
   const recipientAddress: string =
     "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
@@ -126,6 +130,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         message.data &&
         message.data.success !== undefined
       ) {
+        if (message?.data?.event === "sdkWindowOpened") {
+          onSdkOpen?.(); // Hide modal when SDK window opens
+        }
         if (message.data.success) {
           const transactionID = message.data.data.postTransaction.id;
           console.log(message.data);
@@ -189,6 +196,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           );
         }
         setShowModal(true);
+        onSdkComplete?.(); 
       }
     };
 
@@ -206,6 +214,28 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     paymentMethod,
     timestamp,
   ]);
+
+  useEffect(() => {
+    const messageHandler = (event: MessageEvent) => {
+      const message = event.data;
+
+      // Ensure the message is from the expected source
+      if (message?.type === "FROM_CONTENT_SCRIPT") {
+        // Check if the message indicates the SDK window has opened
+        if (message?.data?.event === "sdkWindowOpened") {
+          // onSdkOpen?.(); // Hide modal when SDK window opens
+        }
+
+        // Check if the message indicates the SDK operation is complete
+        if (message?.data?.success) {
+          // onSdkComplete?.(); // Show modal again after successful transaction
+        }
+      }
+    };
+
+    window.addEventListener("message", messageHandler);
+    return () => window.removeEventListener("message", messageHandler);
+  }, [onSdkOpen, onSdkComplete]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -7,6 +7,7 @@ import NotificationModal from "./NotificationModal"; // Modal component
 import Read from "./read"; // Import Read component
 import CashFlow from "./CashFlow"; // Import CashFlow component
 import Report from "./reports";
+import HomePage from "./HomePage";
 // import {
 //   Chart as ChartJS,
 //   LineElement,
@@ -26,8 +27,9 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
   const [showModal, setShowModal] = useState(false);
   const [showTransactionModal, setShowTransactionModal] = useState(false);
-  const [currentPage, setCurrentPage] = useState<string>("home"); // Modification: Used to control the displayed page state
+  const [currentPage, setCurrentPage] = useState<string>("home");
   const [publicKey, setPublicKey] = useState<string>("");
+  const [isModalVisible, setIsModalVisible] = useState(true);
 
   useEffect(() => {
     const storedKey = sessionStorage.getItem('publicKey');
@@ -39,6 +41,29 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
 
   const handleCloseModal = () => {
     setShowTransactionModal(false);
+  };
+
+  // Handler for when SDK window opens
+  const handleSdkOpen = () => {
+    setShowTransactionModal(false);
+  };
+
+  // Handler for when SDK interaction completes
+  const handleSdkComplete = () => {
+    setShowTransactionModal(true);
+  };
+
+  const styles: { [key: string]: React.CSSProperties } = {
+    hiddenModal: {
+      opacity: 0,
+      visibility: 'hidden',
+      transition: 'opacity 0.3s, visibility 0.3s',
+    },
+    visibleModal: {
+      opacity: 1,
+      visibility: 'visible', 
+      transition: 'opacity 0.3s, visibility 0.3s',
+    }
   };
 
   return (
@@ -130,10 +155,12 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
           </ul>
         </nav>
 
+        
+
         {/* Central content area */}
         <div className="content">
           {currentPage === "home" && (
-            <TransactionForm onLogout={onLogout} token={token} />
+            <HomePage onLogout={onLogout} token={token} />
           )}
           {currentPage === "turnover" && <Read />}{" "}
           {currentPage === "report" && <Report />}{" "}
@@ -143,7 +170,10 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
       </div>
 
       {/* Transaction Form Modal */}
-      <Modal show={showTransactionModal} onHide={handleCloseModal}>
+      <Modal 
+        show={showTransactionModal} 
+        onHide={handleCloseModal}
+      >
         <Modal.Header closeButton>
           <Modal.Title>Create New Transaction</Modal.Title>
         </Modal.Header>
@@ -152,6 +182,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
             onLogout={onLogout}
             token={token}
             hideHeading={true}
+            onSdkOpen={handleSdkOpen}
+            onSdkComplete={handleSdkComplete}
           />
         </Modal.Body>
       </Modal>

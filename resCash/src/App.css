@@ -349,3 +349,119 @@
   font-weight: 500;
   word-break: break-all;
 }
+
+/* Main content area */
+.main-content {
+  flex: 1;
+  display: flex;
+  margin-left: 240px; /* Adjusts for fixed sidebar width */
+}
+
+.content-layout {
+  flex: 1;
+  display: flex;
+  padding: 20px;
+}
+
+.left-column,
+.right-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.left-column {
+  width: 30%;
+}
+
+.right-column {
+  width: 70%;
+}
+
+/* Containers within columns */
+.summary-container,
+.cashflow-container,
+.transaction-form,
+.recent-transactions-container {
+  background-color: rgba(26, 26, 46, 0.9);
+  margin-bottom: 20px;
+  padding: 20px;
+  border-radius: 8px;
+  border: 1px solid #4e4e68;
+  color: #f8f9fa;
+}
+
+.summary-container,
+.cashflow-container {
+  flex: 1;
+}
+
+.transaction-form {
+  flex: 1;
+}
+
+.recent-transactions-container {
+  flex: none;
+  height: 30%;
+  overflow-y: auto;
+}
+
+/* CashFlow component styles (if not already defined) */
+.cashflow-container canvas {
+  max-width: 100%;
+}
+
+/* Read component adjustments when hiding header */
+.read-container.no-header .page-title {
+  display: none;
+}
+
+/* Scrollbar styling for recent transactions */
+.recent-transactions-container {
+  scrollbar-width: thin;
+  scrollbar-color: #4e4e68 transparent;
+}
+
+.recent-transactions-container::-webkit-scrollbar {
+  width: 8px;
+}
+
+.recent-transactions-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.recent-transactions-container::-webkit-scrollbar-thumb {
+  background-color: #4e4e68;
+  border-radius: 4px;
+}
+
+/* Media queries for responsiveness */
+@media (max-width: 1200px) {
+  .left-column {
+    width: 35%;
+  }
+  
+  .right-column {
+    width: 65%;
+  }
+}
+
+@media (max-width: 992px) {
+  .left-column,
+  .right-column {
+    width: 100%;
+  }
+
+  .content-layout {
+    flex-direction: column;
+  }
+
+  .main-content {
+    margin-left: 0;
+  }
+
+  .sidebar {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+}
