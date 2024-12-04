@@ -1,6 +1,6 @@
 import express from "express";
 import Transaction from "../models/Transaction.js";
-import { getPublicKey} from '../services/getPublicKey.js';
+import { getPublicKey } from "../services/getPublicKey.js";
 
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
@@ -9,7 +9,6 @@ dotenv.config();
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET;
-
 
 // Add login route
 router.post("/login", async (req, res) => {
@@ -27,14 +26,13 @@ router.post("/login", async (req, res) => {
   res.json({ token });
 });
 
-router.get('/checkSession', (req, res) => {
+router.get("/checkSession", (req, res) => {
   if (req.session.publicKey) {
     res.json({ loggedIn: true, publicKey: req.session.publicKey });
   } else {
     res.json({ loggedIn: false });
   }
 });
-
 
 // Route to add a new transaction
 router.post("/saveTransaction", async (req, res) => {
@@ -43,7 +41,6 @@ router.post("/saveTransaction", async (req, res) => {
       transactionID,
       amount,
       category,
-      currency,
       transactionType,
       notes,
       merchant,
@@ -60,7 +57,6 @@ router.post("/saveTransaction", async (req, res) => {
       transactionID,
       amount: Number(amount),
       category,
-      currency,
       transactionType,
       notes,
       merchant,
@@ -91,8 +87,11 @@ router.get("/", async (req, res) => {
 });
 
 // Route to get a transaction's public key by ID
-router.get('/publicKey/:transactionID', async (req, res) => {
-  console.log("Requesting public key for transactionID:", req.params.transactionID);
+router.get("/publicKey/:transactionID", async (req, res) => {
+  console.log(
+    "Requesting public key for transactionID:",
+    req.params.transactionID
+  );
   const transactionID = req.params.transactionID;
 
   try {
@@ -108,7 +107,6 @@ router.get('/publicKey/:transactionID', async (req, res) => {
     res.status(500).json({ message: "Internal server error." });
   }
 });
-
 
 import mongoose from "mongoose";
 

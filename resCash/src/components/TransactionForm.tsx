@@ -3,7 +3,6 @@ import ResVaultSDK from "resvault-sdk";
 import "../App.css";
 import NotificationModal from "./NotificationModal";
 
-// Adjusted TransactionFormProps to include optional initialData and onFormChange
 interface TransactionFormProps {
   onLogout: () => void;
   token: string | null;
@@ -17,7 +16,6 @@ interface Transaction {
   transactionID: string;
   amount: number;
   category: string;
-  currency: string;
   transactionType: string;
   notes: string;
   merchant: string;
@@ -58,9 +56,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     initialData?.amount.toString() || ""
   );
   const [category, setCategory] = useState<string>(initialData?.category || "");
-  const [currency, setCurrency] = useState<string>(
-    initialData?.currency || "USD"
-  );
   const [transactionType, setTransactionType] = useState<string>(
     initialData?.transactionType || "Expense"
   );
@@ -95,13 +90,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     sdkRef.current = new ResVaultSDK();
   }
 
-  // If onFormChange is provided, call it whenever form data changes
   useEffect(() => {
     if (onFormChange) {
       onFormChange({
         amount: parseFloat(amount),
         category,
-        currency,
         transactionType,
         notes,
         merchant,
@@ -112,7 +105,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   }, [
     amount,
     category,
-    currency,
     transactionType,
     notes,
     merchant,
@@ -136,27 +128,21 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       ) {
         if (message.data.success) {
           const transactionID = message.data.data.postTransaction.id;
-          setModalTitle("Success");
-          setModalMessage("Transaction successful! ID: " + transactionID);
           console.log(message.data);
 
-          // Prepare the request body
           const requestBody = {
             transactionID,
             amount,
             category,
-            currency,
             transactionType,
             notes,
             merchant,
             paymentMethod,
-            timestamp, // Use the timestamp from state
+            timestamp,
           };
 
-          // Log the request body
           console.log("Request Body:", JSON.stringify(requestBody));
 
-          // Send transaction data to the backend
           try {
             const response = await fetch(
               "http://localhost:8099/api/transactions/saveTransaction",
@@ -172,10 +158,19 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
             const result = await response.json();
             if (result.success) {
               console.log("Transaction saved successfully:", result);
+              setModalTitle("Success");
+              setModalMessage(
+                "Transaction to resdb and backend successful! ID: " +
+                  transactionID
+              );
             } else {
               console.error(
                 "Failed to save transaction to backend:",
                 result.message
+              );
+              setModalTitle("Transaction Failed");
+              setModalMessage(
+                "Transaction to backend failed: " + result.message
               );
             }
           } catch (error) {
@@ -183,11 +178,13 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               "An error occurred while saving transaction to backend:",
               error
             );
+            setModalTitle("Transaction Failed");
+            setModalMessage("Transaction to backend failed: " + message);
           }
         } else {
           setModalTitle("Transaction Failed");
           setModalMessage(
-            "Transaction failed: " +
+            "Transaction to resdb failed: " +
               (message.data.error || JSON.stringify(message.data.errors))
           );
         }
@@ -203,7 +200,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   }, [
     amount,
     category,
-    currency,
     transactionType,
     notes,
     merchant,
@@ -214,11 +210,9 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Update the timestamp state
     const currentTimestamp = new Date().toISOString();
     setTimestamp(currentTimestamp);
 
-    // Define transaction data directly as an object
     const transactionData = {
       is_deleted: "false",
       timestamp: currentTimestamp,
@@ -237,7 +231,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
         type: "commit",
         direction: "commit",
         amount: amount,
-        data: transactionData, // Pass as an object, not a JSON string
+        data: transactionData,
         recipient: recipientAddress,
       });
     } else {
@@ -262,9 +256,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
         <form onSubmit={handleSubmit}>
           <div className="form-group mb-3">
+            <label htmlFor="amount">Amount</label>
             <input
               type="text"
               className="form-control"
+              id="amount"
               placeholder="Enter your amount here"
               value={amount}
               onChange={(e) => {
@@ -276,8 +272,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           </div>
 
           <div className="form-group mb-3">
+            <label htmlFor="transactionType">Transaction Type</label>
             <select
               className="form-control"
+              id="transactionType"
               value={transactionType}
               onChange={handleTransactionTypeChange}
             >
@@ -287,8 +285,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           </div>
 
           <div className="form-group mb-3">
+            <label htmlFor="category">Category</label>
             <select
               className="form-control"
+              id="category"
               value={category}
               onChange={handleCategoryChange}
             >
@@ -317,32 +317,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           </div>
 
           <div className="form-group mb-3">
-            <select
-              className="form-control"
-              value={currency}
-              onChange={(e) => {
-                const selectedCurrency = e.target.value;
-                setCurrency(selectedCurrency);
-                onFormChange && onFormChange({ currency: selectedCurrency });
-              }}
-            >
-              <option value="USD">USD - United States Dollar</option>
-              <option value="EUR">EUR - Euro</option>
-              <option value="JPY">JPY - Japanese Yen</option>
-              <option value="GBP">GBP - British Pound</option>
-              <option value="AUD">AUD - Australian Dollar</option>
-              <option value="CAD">CAD - Canadian Dollar</option>
-              <option value="CHF">CHF - Swiss Franc</option>
-              <option value="CNY">CNY - Chinese Yuan</option>
-              <option value="SEK">SEK - Swedish Krona</option>
-              <option value="NZD">NZD - New Zealand Dollar</option>
-            </select>
-          </div>
-
-          <div className="form-group mb-3">
+            <label htmlFor="notes">Notes</label>
             <input
               type="text"
               className="form-control"
+              id="notes"
               placeholder="Enter notes here"
               value={notes}
               onChange={(e) => {
@@ -353,9 +332,11 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           </div>
 
           <div className="form-group mb-3">
+            <label htmlFor="merchant">Merchant</label>
             <input
               type="text"
               className="form-control"
+              id="merchant"
               placeholder="Enter merchant name here"
               value={merchant}
               onChange={(e) => {
@@ -366,8 +347,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           </div>
 
           <div className="form-group mb-3">
+            <label htmlFor="paymentMethod">Payment Method</label>
             <select
               className="form-control"
+              id="paymentMethod"
               value={paymentMethod}
               onChange={(e) => {
                 setPaymentMethod(e.target.value);
