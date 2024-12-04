@@ -102,6 +102,9 @@ const Read = () => {
     <div className="read-container">
       <h2 className="page-title">Turnover</h2>
       <div className="table-container">
+      {data.length === 0 ? (
+          <div className="no-data-message">You don't have any transactions.</div>
+        ) : (
         <table className="data-table">
           <thead>
             <tr>
@@ -138,6 +141,7 @@ const Read = () => {
             )}
           </tbody>
         </table>
+        )}
       </div>
 
       {showModal && selectedTransaction && (

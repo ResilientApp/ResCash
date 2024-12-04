@@ -78,26 +78,23 @@ router.get("/userTransactions", authenticate, async (req, res) => {
         $project: {
           _id: 0,
           transactionID: "$transactions.key",
-          cmd: "$transactions.cmd",
-          timestamp: "$transactions.value.asset.data.timestamp",
-          operation: "$transactions.value.operation",
-          inputs: "$transactions.value.inputs",
-          outputs: "$transactions.value.outputs",
-          metadata: "$transactions.value.metadata",
-          amount: "$transactions.value.outputs.amount",
         },
       },
     ];
     
-    
-
     const transactions = await collection.aggregate(pipeline).toArray();
+    const ids = transactions.map((item) => item.transactionID); // Extract the array of IDs
 
-    if (!transactions.length) {
-      return res.status(404).json({ message: "No transactions found" });
+    if (!ids.length) {
+      return res.status(200).json([]);
     }
 
-    res.status(200).json(transactions);
+    // Step 2: Fetch full transaction details from the transactions collection
+    const mongoTransactions = await db.collection("transactions").find({
+      transactionID: { $in: ids },
+    }).toArray();
+
+    res.status(200).json(mongoTransactions);
   } catch (error) {
     console.error("Error fetching user-specific transactions:", error);
     res.status(500).json({ message: "Internal server error" });
