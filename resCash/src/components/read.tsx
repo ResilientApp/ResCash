@@ -32,24 +32,24 @@ const Read = () => {
           throw new Error('No authentication token found');
         }
     
-      const response = await fetch('http://localhost:8099/api/read/userTransactions', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`, // Include the token in the Authorization header
-        },
-      });
+        const response = await fetch('http://localhost:8099/api/read/userTransactions', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+          },
+        });
     
-      if (!response.ok) {
-        throw new Error(`Network response failed, status code: ${response.status}`);
-      }
+        if (!response.ok) {
+          throw new Error(`Network response failed, status code: ${response.status}`);
+        }
     
-      const result = await response.json(); // Parse the JSON response
-      if (result.message === 'No transactions found') {
-        setData([]); // Set an empty array to indicate no transactions
-      } else {
-        setData(result); // Set the fetched transactions into state
-      }
+        const result = await response.json(); // Parse the JSON response
+        if (result.message === 'No transactions found') {
+          setData([]); // Set an empty array to indicate no transactions
+        } else {
+          setData(result); // Set the fetched transactions into state
+        }
       } catch (err: any) {
         console.error('Data retrieval error:', err);
         setError(err.message);
@@ -102,45 +102,41 @@ const Read = () => {
     <div className="read-container">
       <h2 className="page-title">Turnover</h2>
       <div className="table-container">
-      {data.length === 0 ? (
+        {data.length === 0 ? (
           <div className="no-data-message">You don't have any transactions.</div>
         ) : (
-        <table className="data-table">
-          <thead>
-            <tr>
-              <th>Transaction ID</th>
-              <th>Timestamp</th>
-              <th>Category</th>
-              <th>Transaction Type</th>
-              <th>Name of the Transaction / Merchant</th>
-              <th>Payment Method</th>
-              <th>Amount</th>
-              <th>Currency</th>
-              <th>Notes</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.length === 0 ? (
+          <table className="data-table">
+            <thead>
               <tr>
-                <td colSpan={9}>No Data Found</td>
+                <th>Timestamp</th>
+                <th>Category</th>
+                <th>Transaction Type</th>
+                <th>Name of the Transaction / Merchant</th>
+                <th>Payment Method</th>
+                <th>Amount</th>
+                <th>Notes</th>
               </tr>
-            ) : (
-              data.map((transaction) => (
-                <tr key={transaction._id} onClick={() => handleRowClick(transaction)}>
-                  <td>{transaction.transactionID}</td>
-                  <td>{new Date(transaction.timestamp).toLocaleString()}</td>
-                  <td>{transaction.category}</td>
-                  <td>{transaction.transactionType}</td>
-                  <td>{transaction.merchant}</td>
-                  <td>{transaction.paymentMethod}</td>
-                  <td>{transaction.amount}</td>
-                  <td>{transaction.currency}</td>
-                  <td>{transaction.notes}</td>
+            </thead>
+            <tbody>
+              {data.length === 0 ? (
+                <tr>
+                  <td colSpan={7}>No Data Found</td>
                 </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+              ) : (
+                data.map((transaction) => (
+                  <tr key={transaction._id} onClick={() => handleRowClick(transaction)}>
+                    <td>{new Date(transaction.timestamp).toLocaleString()}</td>
+                    <td>{transaction.category}</td>
+                    <td>{transaction.transactionType}</td>
+                    <td>{transaction.merchant}</td>
+                    <td>{transaction.paymentMethod}</td>
+                    <td>{transaction.amount}</td>
+                    <td>{transaction.notes}</td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
         )}
       </div>
 
@@ -151,7 +147,6 @@ const Read = () => {
           onSave={handleSave}
         />
       )}
-
     </div>
   );
 };
