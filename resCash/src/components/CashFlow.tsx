@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import CashFlowChart from './CashFlowChart'; 
 import './CashFlowStyle.css';
+import NetWorthChart from './NetWorthChart';
 
 interface Transaction {
     _id: string;
@@ -73,7 +74,11 @@ const CashFlow: React.FC = () => {
             {cashFlowData.length === 0 ? (
                 <div>No Data Found</div>
             ) : (
+                <>
+                <p>Cash Flow</p>
                 <CashFlowChart data={cashFlowData} />
+                <p>Net Worth</p>
+                <NetWorthChart data={cashFlowData} /></>
             )}
         </div>
     );
