@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react"; 
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import TransactionForm from "./TransactionForm";
+import ResVaultSDK from "resvault-sdk";
 
 interface Transaction {
   _id: string; // MongoDB ID
@@ -28,8 +29,11 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   onClose,
   onSave,
 }) => {
+  const recipientAddress: string =
+    "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
   const [formData, setFormData] = useState<Transaction>(transaction);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const sdkRef = useRef<ResVaultSDK | null>(null);
 
   useEffect(() => {
     setFormData(transaction);
@@ -81,7 +85,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     try {
       const token = sessionStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:8099/api/transactions/deleteTransaction/${transaction._id}`,
+        `http://localhost:8099/api/deleteTransactions/deleteTransaction/${transaction._id}`,
         {
           method: 'DELETE',
           headers: {
@@ -95,14 +99,42 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       }
 
       const result = await response.json();
+
+      const currentTimestamp = new Date().toISOString();
+      setTimestamp(currentTimestamp);
+
+
       if (result.success) {
+        // Create a new transaction on ResVault with is_deleted set to true
+        const deletedTransaction = result.deletedTransaction;
+        const newTransactionData = {
+          ...deletedTransaction,
+          is_deleted: true,
+          deleted_transactionID: transaction._id,
+        };
+
+        if (sdkRef && sdkRef.current) {
+          sdkRef.current.sendMessage({
+            type: "commit",
+            direction: "commit",
+            amount: deletedTransaction.amount,
+            data: newTransactionData,
+            recipient: recipientAddress,
+          });
+        }
+        
+        console.log("New Transaction Data:", newTransactionData);
+        setShowModal(true);
+
         onClose(); // Pass true to indicate deletion
       } else {
         throw new Error(result.message);
       }
     } catch (err) {
       console.error('Error deleting transaction:', err);
-      alert('Failed to delete transaction');
+      setModalTitle("Error");
+      setModalMessage('Failed to delete transaction');
+      setShowModal(true);
     }
   };
 
@@ -170,3 +202,19 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
 };
 
 export default TransactionModal;
+
+function setTimestamp(currentTimestamp: any) {
+  throw new Error("Function not implemented.");
+}
+function setShowModal(arg0: boolean) {
+  throw new Error("Function not implemented.");
+}
+
+function setModalTitle(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+
+function setModalMessage(arg0: string) {
+  throw new Error("Function not implemented.");
+}
+

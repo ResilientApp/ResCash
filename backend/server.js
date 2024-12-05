@@ -8,6 +8,7 @@ import transactionRoutes from "./routes/transactionRoutes.js";
 import transactionRoutesReport from "./routes/transactionRoutesReport.js";
 import transactionRead from "./routes/transactionRoutesRead.js";
 import transactionRoutesUpdate from "./routes/transactionRoutesUpdate.js";
+import transactionRoutesDelete from "./routes/transactionRoutesDelete.js";
 import sync from './utils/sync.js';
 import mongoose from "mongoose"; // Or MongoDB's native driver
 
@@ -75,3 +76,4 @@ app.use("/api/transactions", transactionRoutes);
 app.use("/api/reports", transactionRoutesReport);
 app.use("/api/read", transactionRead);
 app.use("/api/transactions", transactionRoutesUpdate);
+app.use("/api/transactions", transactionRoutesDelete);
