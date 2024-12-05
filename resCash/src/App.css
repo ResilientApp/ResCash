@@ -31,6 +31,16 @@
   align-items: center;
   flex-direction: column;
   padding: 20px;
+  background-image: url('assets/images/background.png'); 
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+.page-container::after {
+  content: "";
+  display: table;
+  clear: both;
 }
 
 .heading {
@@ -45,7 +55,7 @@
   padding: 30px;
   border-radius: 8px;
   border: 1px solid #4e4e68;
-  max-width: 500px;
+  max-width: 600px;
   width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -232,12 +242,13 @@
   background-color: #2a2a3e;
   padding: 20px;
   color: #f8f9fa;
-  width: 200px;
-  position: fixed;
-  top: 0;
-  left: 0;
+  width: 10%;
+  position: relative;
   height: 100vh;
-  z-index: 1000;
+  float: left;
+  z-index: 1050;
+  flex: 0 0 10%;
+  float: none;
 }
 
 .sidebar ul {
@@ -272,6 +283,8 @@
   flex-direction: column;
   align-items: center;
   padding: 20px;
+  flex: 0 0 90%;
+  display: flex;
 }
 
 .report-container {
@@ -365,15 +378,15 @@
 
 /* Main Content Area */
 .main-content {
-  flex: 1;
+  flex: 0 0 80%;
   display: flex;
-  margin-left: 240px; /* Adjusts for fixed sidebar width */
+  margin-left: 240px;
 }
 
 .content-layout {
   flex: 1;
   display: flex;
-  padding: 20px;
+  padding: 2px;
 }
 
 .left-column,
@@ -383,11 +396,14 @@
 }
 
 .left-column {
-  width: 30%;
+  width: 40%;
+  min-width: 500px;
 }
 
 .right-column {
-  width: 70%;
+  margin-left: 240px;
+  width: calc(60% + 200px);
+  min-width: 600px;
 }
 
 /* Containers within Columns */
@@ -448,7 +464,7 @@
 }
 
 /* Media Queries for Responsiveness */
-@media (max-width: 1200px) {
+@media (max-width: 2400px) {
   .left-column {
     width: 35%;
   }
@@ -458,7 +474,7 @@
   }
 }
 
-@media (max-width: 992px) {
+@media (max-width: 2400px) {
   .left-column,
   .right-column {
     width: 100%;

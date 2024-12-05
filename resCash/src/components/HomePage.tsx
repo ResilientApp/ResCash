@@ -80,23 +80,25 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
         <div className="content-layout">
           {/* Left Column */}
           <div className="left-column">
-          <table className="data-table">
-          <tbody>
-            {data.length === 0 ? (
-              <tr>
-                <td colSpan={9}>No Data Found</td>
-              </tr>
-            ) : (
-              data.map((transaction) => (
-                <tr key={transaction._id}>
-                  <td>{new Date(transaction.timestamp).toLocaleString()}</td>
-                  <td>{transaction.merchant}</td>
-                  <td>{transaction.amount}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
+            <h2 className="page-title">Recent Transactions</h2>
+            <table className="data-table">
+                <tbody>
+                    {data.length === 0 ? (
+                    <tr>
+                        <td colSpan={9}>No Data Found</td>
+                    </tr>
+                    ) : (
+                    data.map((transaction) => (
+                        <tr key={transaction._id}>
+                        <td>{new Date(transaction.timestamp).toLocaleString()}</td>
+                        <td>{transaction.category}</td>
+                        <td>{transaction.merchant}</td>
+                        <td>{transaction.amount}</td>
+                        </tr>
+                    ))
+                    )}
+                </tbody>
+            </table>
           </div>
 
           {/* Right Column */}
