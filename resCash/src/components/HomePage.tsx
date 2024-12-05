@@ -28,14 +28,46 @@ interface Transaction {
   }
 
 const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
-    const [currentPage, setCurrentPage] = useState<string>("home");
     const handleSdkOpen = () => {};
     const handleSdkComplete = () => {};
     const [data, setData] = useState<Array<Transaction>>([]);
+    const [summary, setSummary] = useState({ totalTransactions: 0, netWorth: 0 });
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [selectedTransaction, setSelectedTransaction] = useState<Transaction | null>(null);
-    const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const token = sessionStorage.getItem("token"); // Retrieve the token from session storage
+        if (!token) {
+          throw new Error("No authentication token found");
+        }
+
+        const [summaryRes] =
+          await Promise.all([
+            fetch("http://localhost:8099/api/reports/summary", {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`, // Include the token in the Authorization header
+              },
+            }),
+          ]);
+
+        if (!summaryRes.ok) {
+          throw new Error("Failed to fetch data");
+        }
+
+        const summaryData = await summaryRes.json();
+        setSummary(summaryData);
+      } catch (err: any) {
+        console.error("Data retrieval error:", err);
+      }
+    };
+
+    fetchData();
+  }, []);
+
 
     useEffect(() => {
         const fetchUserTransactions = async () => {
@@ -76,42 +108,48 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
         // Fetch user-specific transactions on component mount
         fetchUserTransactions();
     }, []);
+
+
     return (
         <div className="content-layout">
           {/* Left Column */}
           <div className="left-column">
-            <h2 className="page-title">Recent Transactions</h2>
-            <table className="data-table">
-                <tbody>
-                    {data.length === 0 ? (
-                    <tr>
-                        <td colSpan={9}>No Data Found</td>
-                    </tr>
-                    ) : (
-                    data.map((transaction) => (
-                        <tr key={transaction._id}>
-                        <td>{new Date(transaction.timestamp).toLocaleString()}</td>
-                        <td>{transaction.category}</td>
-                        <td>{transaction.merchant}</td>
-                        <td>{transaction.amount}</td>
+            <div className="summary-container">
+                <h2 className="page-title">Recent Transactions</h2>
+                <h2>{summary.netWorth.toFixed(2)}</h2>
+            </div>
+            <div className="recent-transactions-container">
+                <h2 className="page-title">Recent Transactions</h2>
+                <table className="data-table">
+                    <tbody>
+                        {data.length === 0 ? (
+                        <tr>
+                            <td colSpan={9}>No Data Found</td>
                         </tr>
-                    ))
-                    )}
-                </tbody>
-            </table>
+                        ) : (
+                        data.map((transaction) => (
+                            <tr key={transaction._id}>
+                            <td>{new Date(transaction.timestamp).toLocaleString()}</td>
+                            <td>{transaction.category}</td>
+                            <td>{transaction.merchant}</td>
+                            <td>{transaction.amount}</td>
+                            </tr>
+                        ))
+                        )}
+                    </tbody>
+                </table>
+            </div>
           </div>
 
           {/* Right Column */}
           <div className="right-column">
-            <div className="transaction-form">
-              <TransactionForm
+            <TransactionForm
                 onLogout={onLogout}
                 token={token}
                 hideHeading={true}
                 onSdkOpen={handleSdkOpen}
                 onSdkComplete={handleSdkComplete}
-              />
-            </div>
+            />
           </div>
         </div>
     );

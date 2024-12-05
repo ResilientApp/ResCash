@@ -401,7 +401,7 @@
 }
 
 .right-column {
-  margin-left: 240px;
+  margin-left: 100px;
   width: calc(60% + 200px);
   min-width: 600px;
 }
@@ -421,7 +421,8 @@
 
 .summary-container,
 .cashflow-container {
-  flex: 1;
+  flex: none;
+  height: 15%;
 }
 
 .transaction-form {
@@ -430,8 +431,7 @@
 
 .recent-transactions-container {
   flex: none;
-  height: 30%;
-  overflow-y: auto;
+  height: 85%;
 }
 
 /* CashFlow Component Styles */
