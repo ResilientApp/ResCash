@@ -85,7 +85,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     try {
       const token = sessionStorage.getItem('token');
       const response = await fetch(
-        `http://localhost:8099/api/deleteTransactions/deleteTransaction/${transaction._id}`,
+        `http://localhost:8099/api/transactions/deleteTransaction/${transaction._id}`,
         {
           method: 'DELETE',
           headers: {
