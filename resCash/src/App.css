@@ -1,8 +1,30 @@
+/* Light Theme Styles */
+.light-theme {
+  background-color: #f8f9fa; /* Light background color */
+  color: #343a40; /* Dark font color */
+}
+
+.light-theme .card {
+  background-color: #ffffff; /* White background for card */
+  color: #343a40; /* Dark font color */
+}
+
+.light-theme .btn-secondary {
+  background-color: #6c757d; /* Secondary button background color */
+  color: #ffffff; /* Button font color */
+}
+
+.light-theme .heading {
+  color: #343a40; /* Dark font color for heading */
+}
+
+.light-theme .signin-label {
+  color: #343a40; /* Dark font color for label */
+}
+
+/* General Styles */
 .page-container {
-  background-image: url("assets/images/bg.svg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
+  background-color: #f3f4f7; /* Light background color */
   min-height: 100vh;
   display: flex;
   justify-content: center;
@@ -12,13 +34,14 @@
 }
 
 .heading {
-  color: #f8f9fa;
+  color: #f3f4f7;
   text-align: center;
   margin-bottom: 20px;
 }
 
 .form-container {
-  background-color: rgba(26, 26, 46, 0.9);
+  /* background-color: rgba(26, 26, 46, 0.9); */
+  background-color: #071739;
   padding: 30px;
   border-radius: 8px;
   border: 1px solid #4e4e68;
@@ -74,7 +97,7 @@
 }
 
 .signin-label {
-  color: #f8f9fa;
+  color: #f3f4f7;
   font-size: 18px;
   margin-bottom: 10px;
   display: block;
@@ -151,6 +174,7 @@
   z-index: 1050;
 }
 
+/* Modal Styles */
 .custom-modal .modal-content {
   background-color: rgba(26, 26, 46, 0.95);
   color: #f8f9fa;
@@ -175,12 +199,14 @@
   max-width: 600px;
 }
 
+/* Animation Container */
 .animationContainer {
-  width: 300;
-  height: 300;
-  margin: "0 auto";
+  width: 300px;
+  height: 300px;
+  margin: 0 auto;
 }
 
+/* Header Styles */
 .header {
   display: flex;
   align-items: center;
@@ -201,11 +227,7 @@
   color: #f8f9fa;
 }
 
-.main-content {
-  display: flex;
-  flex: 1;
-}
-
+/* Sidebar Styles */
 .sidebar {
   background-color: #2a2a3e;
   padding: 20px;
@@ -243,6 +265,7 @@
   background-color: rgba(255, 255, 255, 0.1);
 }
 
+/* Content Styles */
 .content {
   flex: 1;
   display: flex;
@@ -285,7 +308,7 @@
   margin-bottom: 10px;
 }
 
-/* Add to App.css */
+/* User Info Styles */
 .user-info {
   padding: 15px 0;
   margin-bottom: 20px;
@@ -297,39 +320,6 @@
   font-size: 16px;
   font-weight: 500;
   word-break: break-all;
-}
-
-.extension-popup {
-  position: fixed !important;
-  z-index: 10000 !important;
-}
-
-.modal-dialog {
-  z-index: 9000;
-}
-
-.modal-backdrop {
-  z-index: 8000;
-}
-
-.modal {
-  z-index: 8500;
-}
-
-.sidebar {
-  z-index: 1000;
-}
-
-.header {
-  z-index: 1000;
-}
-
-.extension-popup {
-  pointer-events: auto !important;
-}
-
-.modal-backdrop.show {
-  opacity: 0.5;
 }
 
 .info-container {
@@ -350,7 +340,30 @@
   word-break: break-all;
 }
 
-/* Main content area */
+/* Extension Popup Styles */
+.extension-popup {
+  position: fixed !important;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
+.modal-dialog {
+  z-index: 9000;
+}
+
+.modal-backdrop {
+  z-index: 8000;
+}
+
+.modal {
+  z-index: 8500;
+}
+
+.modal-backdrop.show {
+  opacity: 0.5;
+}
+
+/* Main Content Area */
 .main-content {
   flex: 1;
   display: flex;
@@ -377,7 +390,7 @@
   width: 70%;
 }
 
-/* Containers within columns */
+/* Containers within Columns */
 .summary-container,
 .cashflow-container,
 .transaction-form,
@@ -405,17 +418,17 @@
   overflow-y: auto;
 }
 
-/* CashFlow component styles (if not already defined) */
+/* CashFlow Component Styles */
 .cashflow-container canvas {
   max-width: 100%;
 }
 
-/* Read component adjustments when hiding header */
+/* Read Component Adjustments */
 .read-container.no-header .page-title {
   display: none;
 }
 
-/* Scrollbar styling for recent transactions */
+/* Scrollbar Styling for Recent Transactions */
 .recent-transactions-container {
   scrollbar-width: thin;
   scrollbar-color: #4e4e68 transparent;
@@ -434,12 +447,12 @@
   border-radius: 4px;
 }
 
-/* Media queries for responsiveness */
+/* Media Queries for Responsiveness */
 @media (max-width: 1200px) {
   .left-column {
     width: 35%;
   }
-  
+
   .right-column {
     width: 65%;
   }
