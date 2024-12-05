@@ -31,7 +31,7 @@
   align-items: center;
   flex-direction: column;
   padding: 20px;
-  background-image: url('assets/images/background.png'); 
+  background-image: url("assets/images/background.png");
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
@@ -287,14 +287,41 @@
   display: flex;
 }
 
+/* Custom styles for the Report component */
 .report-container {
-  display: flex;
-  gap: 20px; /* Adds spacing between the columns */
+  background-color: #e1f5fe; /* Light background color */
+  color: #1a1a2e; /* Dark font color */
   padding: 20px;
-  background-color: rgba(26, 26, 46, 0.9);
   border-radius: 8px;
-  border: 1px solid #4e4e68;
+  border: 1px solid #c6e7ff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.report-card {
+  background-color: #d4f6ff; /* Light blue background for cards */
+  color: #1a1a2e; /* Dark font color */
+  border: 1px solid #c6e7ff;
+  margin-bottom: 20px;
+}
+
+.report-card-header {
+  background-color: #c6e7ff; /* Blue background for card headers */
+  color: #1a1a2e; /* Dark font color */
+  font-size: 1.5rem; /* Larger font size */
+  padding: 10px 15px;
+}
+
+.report-list-group-item {
+  background-color: #d4f6ff; /* Match card background */
+  color: #1a1a2e; /* Dark font color */
+  border: 1px solid #c6e7ff;
+}
+
+.report-heading {
+  color: #1a1a2e; /* Dark font color */
+  text-align: center;
+  margin: 20px 0; /* Add margin to create distance from the top */
+  font-size: 1.25rem; /* Smaller font size than card header */
 }
 
 .column {

@@ -1,5 +1,14 @@
 import React, { useEffect, useState } from "react";
 import "../App.css";
+import {
+  Spinner,
+  Alert,
+  Card,
+  ListGroup,
+  Container,
+  Row,
+  Col,
+} from "react-bootstrap";
 
 const expenseCategories = [
   "Housing",
@@ -103,11 +112,11 @@ const Report = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner animation="border" variant="primary" />;
   }
 
   if (error) {
-    return <div>Error: {error}</div>;
+    return <Alert variant="danger">{error}</Alert>;
   }
 
   const sortedExpenseSummary = categorySummary
@@ -119,44 +128,74 @@ const Report = () => {
     .sort((a: any, b: any) => b.totalAmount - a.totalAmount);
 
   return (
-    <div className="report-container">
-      <div className="column">
-        <h2>Summary by Category</h2>
-        <h3>Expense</h3>
-        <ul>
-          {sortedExpenseSummary.map((item: any, index: number) => (
-            <li key={index}>
-              {item._id}: {item.totalAmount.toFixed(2)}
-            </li>
-          ))}
-        </ul>
-        <h3>Income</h3>
-        <ul>
-          {sortedIncomeSummary.map((item: any, index: number) => (
-            <li key={index}>
-              {item._id}: {item.totalAmount.toFixed(2)}
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div className="column">
-        <h2>Summary</h2>
-        <ul>
-          <li>Total Transactions: {summary.totalTransactions}</li>
-          <li>Net Worth: {summary.netWorth.toFixed(2)}</li>
-        </ul>
-        <h2>Expense Summary</h2>
-        <ul>
-          <li>Total Expense: {expenseSummary.totalExpense.toFixed(2)}</li>
-          <li>Average Expense: {expenseSummary.averageExpense.toFixed(2)}</li>
-        </ul>
-        <h2>Income Summary</h2>
-        <ul>
-          <li>Total Income: {incomeSummary.totalIncome.toFixed(2)}</li>
-          <li>Average Income: {incomeSummary.averageIncome.toFixed(2)}</li>
-        </ul>
-      </div>
-    </div>
+    <Container className="report-container">
+      <Row>
+        <Col>
+          <Card className="report-card">
+            <Card.Header className="report-card-header">
+              Summary by Category
+            </Card.Header>
+            <Card.Body>
+              <h3 className="report-heading">Expense</h3>
+              <ListGroup>
+                {sortedExpenseSummary.map((item: any, index: number) => (
+                  <ListGroup.Item
+                    key={index}
+                    className="report-list-group-item"
+                  >
+                    {item._id}: {item.totalAmount.toFixed(2)}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+              <h3 className="report-heading">Income</h3>
+              <ListGroup>
+                {sortedIncomeSummary.map((item: any, index: number) => (
+                  <ListGroup.Item
+                    key={index}
+                    className="report-list-group-item"
+                  >
+                    {item._id}: {item.totalAmount.toFixed(2)}
+                  </ListGroup.Item>
+                ))}
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
+        <Col>
+          <Card className="report-card">
+            <Card.Header className="report-card-header">Summary</Card.Header>
+            <Card.Body>
+              <ListGroup>
+                <ListGroup.Item className="report-list-group-item">
+                  Total Transactions: {summary.totalTransactions}
+                </ListGroup.Item>
+                <ListGroup.Item className="report-list-group-item">
+                  Net Worth: {summary.netWorth.toFixed(2)}
+                </ListGroup.Item>
+              </ListGroup>
+              <h2 className="report-heading">Expense Summary</h2>
+              <ListGroup>
+                <ListGroup.Item className="report-list-group-item">
+                  Total Expense: {expenseSummary.totalExpense.toFixed(2)}
+                </ListGroup.Item>
+                <ListGroup.Item className="report-list-group-item">
+                  Average Expense: {expenseSummary.averageExpense.toFixed(2)}
+                </ListGroup.Item>
+              </ListGroup>
+              <h2 className="report-heading">Income Summary</h2>
+              <ListGroup>
+                <ListGroup.Item className="report-list-group-item">
+                  Total Income: {incomeSummary.totalIncome.toFixed(2)}
+                </ListGroup.Item>
+                <ListGroup.Item className="report-list-group-item">
+                  Average Income: {incomeSummary.averageIncome.toFixed(2)}
+                </ListGroup.Item>
+              </ListGroup>
+            </Card.Body>
+          </Card>
+        </Col>
+      </Row>
+    </Container>
   );
 };
 
