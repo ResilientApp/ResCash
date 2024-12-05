@@ -1,0 +1,82 @@
+/* Overall layout container */
+.layout-container {
+  display: flex;
+  height: 100vh; /* Make the page occupy the full height */
+}
+
+/* Sidebar styles */
+.sidebar {
+  width: 240px; /* Fixed sidebar width */
+  background-color: #2e2e3e; /* Sidebar background color */
+  flex-shrink: 0;
+  height: 100%;
+  position: fixed; /* Keep the sidebar fixed on the left */
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  color: #fff;
+}
+
+/* Main content area */
+.main-content {
+  margin-left: 240px; /* Leave space equal to the sidebar width */
+  flex-grow: 1;
+  padding: 20px;
+  overflow-y: auto;
+  background-color: #1e1e2f; /* Main content background color */
+  color: #fff;
+}
+
+.read-container {
+  padding: 20px;
+  background-color: #1e1e2f; /* Set color matching the background */
+  color: #fff; /* Set text color */
+}
+
+.page-title {
+  font-size: 1.8rem;
+  font-weight: bold;
+  margin-bottom: 20px;
+  color: #ffffff; /* Set title color */
+}
+
+.table-container {
+  overflow-x: auto; /* Make the table scrollable on small screens */
+  background-color: #2e2e3e;
+  padding: 15px;
+  border-radius: 8px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #ddd; /* Table text color */
+}
+
+.data-table th, .data-table td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #444; /* Set table border color */
+}
+
+.data-table th {
+  background-color: #3e3e4e; /* Set table header background color */
+}
+
+.data-table tr:hover {
+  background-color: #353545; /* Row background color when hovering */
+}
+
+.edit-button {
+  padding: 8px 12px;
+  background-color: #ff4d4f;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+  background-color: #d9363e; /* Button color change when hovering */
+}
