@@ -116,7 +116,7 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
           <div className="left-column">
             <div className="summary-container">
                 <h2 className="page-title">Net Worth</h2>
-                <h2>${summary.netWorth.toFixed(2)}</h2>
+                <h2 className="page-title">${summary.netWorth.toFixed(2)}</h2>
             </div>
             <div className="recent-transactions-container">
                 <h2 className="page-title">Recent Transactions</h2>

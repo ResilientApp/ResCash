@@ -148,7 +148,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   return (
     <>
       <div className="page-container">
-        <div className="form-container">
+        <div className="form-container-login">
           <h2 className="heading">ResCash</h2>
 
           <div ref={animationContainer} className="animation-container"></div>

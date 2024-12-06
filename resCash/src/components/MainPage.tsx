@@ -116,9 +116,9 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
             </div>
           </div>
 
-          <button className="button" onClick={() => setShowTransactionModal(true)}>
+          {/* <button className="button" onClick={() => setShowTransactionModal(true)}>
             CREATE
-          </button>
+          </button> */}
           <ul>
             <li
               className={`sidebar-item ${
@@ -183,6 +183,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
       <Modal 
         show={showTransactionModal} 
         onHide={handleCloseModal}
+        dialogClassName="modal"
       >
         <Modal.Header closeButton>
           <Modal.Title>Create New Transaction</Modal.Title>
