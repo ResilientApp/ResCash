@@ -2,7 +2,7 @@
 
 .cashflow-container {
     padding: 20px;
-    background-color: #1e1e2f; /* Dark background for the container */
+    background-color: #E1F5FE; /* Dark background for the container */
     border-radius: 10px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Enhanced shadow effect */
     margin: 20px;
@@ -15,7 +15,7 @@
 .cashflow-title {
     font-size: 24px;
     margin-bottom: 20px;
-    color: #ffffff; /* Title text color set to white */
+    color: #4DA6FF; /* Title text color set to white */
     text-align: center; /* Center-align the title */
 }
 
@@ -27,7 +27,7 @@
     width: 100%;
     border-collapse: collapse; /* Remove space between table cells */
     margin-bottom: 20px;
-    background-color: #2d2d3f; /* Background color for the table */
+    background-color: #C6E7FF; /* Background color for the table */
 }
 
 .cashflow-table th,
@@ -39,17 +39,17 @@
 }
 
 .cashflow-table th {
-    background-color: #3a3a4f; /* Background color for table headers */
+    background-color: #C6E7FF; /* Background color for table headers */
     font-weight: bold; /* Bold font for table headers */
     color: #ffffff; /* Text color for table headers set to white */
 }
 
 .cashflow-table tr:nth-child(even) {
-    background-color: #292939; /* Background color for even rows */
+    background-color: #C6E7FF; /* Background color for even rows */
 }
 
 .cashflow-table tr:hover {
-    background-color: #3e3e5a; /* Highlight background color when hovering over rows */
+    background-color: #C6E7FF; /* Highlight background color when hovering over rows */
 }
 
 .error-message {
@@ -68,4 +68,6 @@
 .chart-legend {
     color: #ffffff; /* Ensure chart legend text is white */
 }
+
+
 
