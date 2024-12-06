@@ -76,4 +76,4 @@ app.use("/api/transactions", transactionRoutes);
 app.use("/api/reports", transactionRoutesReport);
 app.use("/api/read", transactionRead);
 app.use("/api/transactions", transactionRoutesUpdate);
-app.use("/api/transactions", transactionRoutesDelete);
+app.use("/api/deleteTransactions", transactionRoutesDelete);

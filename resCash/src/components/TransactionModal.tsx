@@ -34,9 +34,14 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   const [formData, setFormData] = useState<Transaction>(transaction);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const sdkRef = useRef<ResVaultSDK | null>(null);
+  const [modalTitle, setModalTitle] = useState<string>("");
+  const [modalMessage, setModalMessage] = useState<string>("");
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
-    setFormData(transaction);
+    if (transaction && JSON.stringify(formData) !== JSON.stringify(transaction)) {
+      setFormData(transaction);
+    }
   }, [transaction]);
 
   const handleFormChange = (updatedFields: Partial<Transaction>) => {
@@ -89,44 +94,38 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
         {
           method: 'DELETE',
           headers: {
-            'Authorization': `Bearer ${token}`
-          }
+            'Authorization': `Bearer ${token}`,
+          },
         }
       );
-
+  
       if (!response.ok) {
         throw new Error('Failed to delete transaction');
       }
-
+  
       const result = await response.json();
-
-      const currentTimestamp = new Date().toISOString();
-      setTimestamp(currentTimestamp);
-
-
       if (result.success) {
-        // Create a new transaction on ResVault with is_deleted set to true
+        console.log("Transaction deleted successfully!");
         const deletedTransaction = result.deletedTransaction;
         const newTransactionData = {
-          ...deletedTransaction,
+          deletedTransaction,
           is_deleted: true,
-          deleted_transactionID: transaction._id,
+          deleted_transactionID: transaction.transactionID,
         };
-
-        if (sdkRef && sdkRef.current) {
-          sdkRef.current.sendMessage({
-            type: "commit",
-            direction: "commit",
-            amount: deletedTransaction.amount,
-            data: newTransactionData,
-            recipient: recipientAddress,
-          });
-        }
         
+        if (sdkRef && sdkRef.current) {
+          sdkRef.current.sendMessage({  
+            type: "commit", 
+            direction: "commit",  
+            amount: deletedTransaction.amount,  
+            data: newTransactionData,  
+            recipient: recipientAddress,  
+          }); 
+        }
+        console.log("New Transanctoin ID: ", )
         console.log("New Transaction Data:", newTransactionData);
         setShowModal(true);
-
-        onClose(); // Pass true to indicate deletion
+        onClose(); // Close the modal after successful deletion
       } else {
         throw new Error(result.message);
       }
@@ -137,6 +136,8 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       setShowModal(true);
     }
   };
+  
+
 
   return (
     <>
