@@ -86,7 +86,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         const yScale = chartHeight / (maxY - minY);
 
         // Set background color
-        ctx.fillStyle = '#1e1e2f'; // Dark background
+        ctx.fillStyle = '#D4F6FF'; // Dark background
         ctx.fillRect(0, 0, width, height);
 
         // Draw grid lines and Y axis ticks
@@ -101,7 +101,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         }
 
         // Draw X and Y axes
-        ctx.strokeStyle = '#ffffff'; // White axis
+        ctx.strokeStyle = '#000000'; // White axis
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(margin.left, margin.top + chartHeight);
@@ -142,7 +142,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         });
 
         // Add X axis labels, rotate to avoid overlap
-        ctx.fillStyle = '#ffffff'; // White text
+        ctx.fillStyle = '#000000'; // White text
         ctx.font = '12px Arial';
         ctx.textAlign = 'right';
         labels.forEach((label, index) => {

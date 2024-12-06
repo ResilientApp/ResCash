@@ -8,6 +8,7 @@ import Read from "./read"; // Import Read component
 import CashFlow from "./CashFlow"; // Import CashFlow component
 import Report from "./reports";
 import HomePage from "./HomePage";
+import NetWorth from "./NetWorth";
 // import {
 //   Chart as ChartJS,
 //   LineElement,
@@ -152,6 +153,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
             >
               Cash Flow
             </li>
+            <li 
+              className={`sidebar-item ${
+                currentPage === 'networth' ? 'active' : ""
+              }`}
+              onClick={() => setCurrentPage('networth')}
+            >
+              Net Worth
+            </li>
           </ul>
         </nav>
 
@@ -165,6 +174,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
           {currentPage === "turnover" && <Read />}{" "}
           {currentPage === "report" && <Report />}{" "}
           {currentPage === "cashflow" && <CashFlow />}
+          {currentPage === "networth" && <NetWorth />}
           {/* Modification: Display the Read component based on currentPage */}
         </div>
       </div>

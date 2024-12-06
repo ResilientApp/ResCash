@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import CashFlowChart from './CashFlowChart'; 
+import NetWorthChart from './NetWorthChart'; 
 import './CashFlowStyle.css';
-import NetWorthChart from './NetWorthChart';
+
 
 interface Transaction {
     _id: string;
@@ -17,13 +17,13 @@ interface Transaction {
     paymentMethod: string;
 }
 
-const CashFlow: React.FC = () => {
-    const [cashFlowData, setCashFlowData] = useState<Transaction[]>([]);
+const NetWorth: React.FC = () => {
+    const [cashFlowData, setNetWorthData] = useState<Transaction[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        const fetchCashFlowData = async () => {
+        const fetchNetWorthData = async () => {
             try {
                 const token = sessionStorage.getItem('token');
                 if (!token) {
@@ -45,9 +45,9 @@ const CashFlow: React.FC = () => {
 
                 const result = await response.json();
                 if (result.message === 'No transactions found') {
-                    setCashFlowData([]); //set empty data
+                    setNetWorthData([]); //set empty data
                 } else {
-                    setCashFlowData(result); // fetch new data
+                    setNetWorthData(result); // fetch new data
                 }
             } catch (err: any) {
                 console.error('Error fetching cash flow data:', err);
@@ -57,7 +57,7 @@ const CashFlow: React.FC = () => {
             }
         };
 
-        fetchCashFlowData();
+        fetchNetWorthData();
     }, []);
 
     if (loading) {
@@ -70,17 +70,16 @@ const CashFlow: React.FC = () => {
 
     return (
         <div className="cashflow-container">
-            <h2 className="cashflow-title">Cash Flow</h2>
+            <h2 className="cashflow-title">Net Worth</h2>
             {cashFlowData.length === 0 ? (
                 <div>No Data Found</div>
             ) : (
                 <>
-                <CashFlowChart data={cashFlowData} />
-                </>
+                <NetWorthChart data={cashFlowData} /></>
             )}
         </div>
     );
 };
 
-export default CashFlow;
+export default NetWorth;
 
