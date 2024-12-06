@@ -45,11 +45,14 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   }, [transaction]);
 
   const handleFormChange = (updatedFields: Partial<Transaction>) => {
-    setFormData((prevFormData) => ({
-      ...prevFormData,
-      ...updatedFields,
-    }));
+    if (JSON.stringify(updatedFields) !== JSON.stringify(formData)) {
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        ...updatedFields,
+      }));
+    }
   };
+  
 
   const handleSave = async () => {
     try {
@@ -181,14 +184,14 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
         </Modal>
 
         {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)}>
-        <Modal.Header closeButton>
+      <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered className="custom-modal">
+        <Modal.Header closeButton className="custom-modal-header">
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
-        <Modal.Body>
+        <Modal.Body className="custom-modal-body">
           Are you sure you want to delete this transaction? This action cannot be undone.
         </Modal.Body>
-        <Modal.Footer>
+        <Modal.Footer className="custom-modal-footer">
           <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
             Cancel
           </Button>
