@@ -196,7 +196,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
           );
         }
         setShowModal(true);
-        onSdkComplete?.(); 
+        onSdkComplete?.();
       }
     };
 
@@ -280,8 +280,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
   return (
     <>
       <div className="form-container">
-        <div className="d-flex justify-content-between align-items-center mb-4">
-          <h2 className="heading">Submit Transaction</h2>
+        <div className="heading-container">
+          <h2 className="heading">Create Transaction</h2>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -352,7 +352,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               type="text"
               className="form-control"
               id="notes"
-              placeholder="Enter notes here"
+              placeholder="Enter notes here (optional)"
               value={notes}
               onChange={(e) => {
                 setNotes(e.target.value);
@@ -367,7 +367,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
               type="text"
               className="form-control"
               id="merchant"
-              placeholder="Enter merchant name here"
+              placeholder="Enter merchant name here (optional)"
               value={merchant}
               onChange={(e) => {
                 setMerchant(e.target.value);

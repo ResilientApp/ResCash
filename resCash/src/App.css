@@ -43,27 +43,22 @@
   clear: both;
 }
 
-.heading {
-  color: #f3f4f7;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
+/* Custom styles for the TransactionForm component */
 .form-container {
-  /* background-color: rgba(26, 26, 46, 0.9); */
-  background-color: #071739;
+  background-color: #e1f5fe; /* Background color */
   padding: 30px;
   border-radius: 8px;
-  border: 1px solid #4e4e68;
+  border: 1px solid #c6e7ff;
   max-width: 600px;
   width: 100%;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  color: #1a1a2e; /* Dark font color */
 }
 
 .form-control {
-  background-color: #1a1a2e; /* Set your desired background color */
-  color: #ffffff; /* Set your desired text color */
-  border: 1px solid #4e4e68; /* Set your desired border color */
+  background-color: #d4f6ff; /* Secondary color */
+  color: #1a1a2e; /* Dark font color */
+  border: 1px solid #c6e7ff; /* Primary color */
   padding: 10px;
   border-radius: 5px;
   width: 100%;
@@ -72,21 +67,20 @@
 }
 
 .form-control:focus {
-  background-color: #1a1a2e; /* Ensure the background color stays the same on focus */
-  color: #ffffff; /* Ensure the text color stays the same on focus */
+  background-color: #d4f6ff; /* Ensure the background color stays the same on focus */
+  color: #1a1a2e; /* Ensure the text color stays the same on focus */
   border-color: #80bdff; /* Optional: Change border color on focus */
   box-shadow: 0 0 8px rgba(128, 189, 255, 0.5); /* Optional: Add a shadow on focus */
   outline: none; /* Remove the default outline */
 }
 
 .form-control::placeholder {
-  color: #b0b0b0; /* Set your desired placeholder color */
+  color: #6c757d; /* Placeholder color */
 }
 
 .button {
-  background-color: #4e4e68;
-  border-color: #4e4e68;
-  color: #ffffff;
+  background-color: #c6e7ff; /* Primary color */
+  color: #1a1a2e; /* Dark font color */
   padding: 10px;
   border-radius: 5px;
   cursor: pointer;
@@ -94,12 +88,39 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  border: none; /* Remove border */
+}
+
+.button:hover {
+  background-color: #b5d6ff; /* Slightly darker shade for hover effect */
+  color: #1a1a2e;
+}
+
+.button:active {
+  background-color: #c6e7ff; /* Keep the same background color on click */
+  color: #1a1a2e;
 }
 
 .button img {
   margin-right: 10px;
   height: 20px;
   width: 20px;
+}
+
+.heading-container {
+  display: flex;
+  justify-content: center; /* Center the heading horizontally */
+  align-items: center; /* Center the heading vertically */
+  margin-bottom: 20px;
+}
+
+.heading {
+  color: #1a1a2e; /* Dark font color */
+  background-color: #c6e7ff; /* Primary color for header box */
+  padding: 10px;
+  border-radius: 5px;
+  width: 100%; /* Ensure it takes the full width */
+  text-align: center; /* Center the text */
 }
 
 .button-group {
@@ -186,17 +207,26 @@
 
 /* Modal Styles */
 .custom-modal .modal-content {
-  background-color: rgba(26, 26, 46, 0.95);
-  color: #f8f9fa;
-  border: 1px solid #4e4e68;
+  background-color: #e1f5fe; /* Light background color */
+  color: #1a1a2e; /* Dark font color */
+  border: 1px solid #c6e7ff; /* Primary color for border */
 }
 
 .custom-modal-header {
-  border-bottom: 1px solid #4e4e68;
+  background-color: #c6e7ff; /* Primary color for header */
+  color: #1a1a2e; /* Dark font color */
+  border-bottom: 1px solid #c6e7ff; /* Primary color for border */
 }
 
 .custom-modal-footer {
-  border-top: 1px solid #4e4e68;
+  background-color: #c6e7ff; /* Primary color for footer */
+  color: #1a1a2e; /* Dark font color */
+  border-top: 1px solid #c6e7ff; /* Primary color for border */
+}
+
+.custom-modal-body {
+  background-color: #d4f6ff; /* Secondary color for body */
+  color: #1a1a2e; /* Dark font color */
 }
 
 .custom-modal-body p {

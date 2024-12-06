@@ -1,5 +1,5 @@
-import React from 'react';
-import { Modal, Button } from 'react-bootstrap';
+import React from "react";
+import { Modal, Button } from "react-bootstrap";
 
 interface NotificationModalProps {
   show: boolean;
@@ -8,7 +8,12 @@ interface NotificationModalProps {
   onClose: () => void;
 }
 
-const NotificationModal: React.FC<NotificationModalProps> = ({ show, title, message, onClose }) => {
+const NotificationModal: React.FC<NotificationModalProps> = ({
+  show,
+  title,
+  message,
+  onClose,
+}) => {
   return (
     <Modal show={show} onHide={onClose} centered className="custom-modal">
       <Modal.Header closeButton className="custom-modal-header">
