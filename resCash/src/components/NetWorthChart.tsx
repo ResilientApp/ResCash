@@ -45,19 +45,29 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         const chartWidth = width - margin.left - margin.right;
         const chartHeight = height - margin.top - margin.bottom;
 
-        // Extract data
-        const labels = filteredData.map((transaction) => {
+        // Extract data grouped by date
+        const groupedData: { [date: string]: { income: number; expense: number } } = {};
+        filteredData.forEach((transaction) => {
             const date = new Date(transaction.timestamp);
-            const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Format month as 2-digit
-            const day = date.getDate().toString().padStart(2, '0'); // Format day as 2-digit
-            return `${month}-${day}`; // Format as "MM-DD"
+            const month = (date.getMonth() + 1).toString().padStart(2, '0');
+            const day = date.getDate().toString().padStart(2, '0');
+            const dateKey = `${month}-${day}`;
+
+            if (!groupedData[dateKey]) {
+                groupedData[dateKey] = { income: 0, expense: 0 };
+            }
+
+            if (transaction.transactionType === 'Income') {
+                groupedData[dateKey].income += transaction.amount;
+            } else if (transaction.transactionType === 'Expense') {
+                groupedData[dateKey].expense += transaction.amount;
+            }
         });
-        const incomes = filteredData.map((transaction) =>
-            transaction.transactionType === 'Income' ? transaction.amount : 0
-        );
-        const expenses = filteredData.map((transaction) =>
-            transaction.transactionType === 'Expense' ? transaction.amount : 0
-        );
+
+        const labels = Object.keys(groupedData);
+        const incomes = labels.map((label) => groupedData[label].income);
+        const expenses = labels.map((label) => groupedData[label].expense);
+
         const netNetWorth = incomes.map((income, index) => income - expenses[index]);
         
         const netWorth = [];
