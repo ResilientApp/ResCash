@@ -33,10 +33,15 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
   const [isModalVisible, setIsModalVisible] = useState(true);
 
   useEffect(() => {
-    const storedKey = sessionStorage.getItem('publicKey');
+    const storedKey = sessionStorage.getItem("publicKey");
     if (storedKey) {
       // Show first 8 characters of public key
       setPublicKey(storedKey.substring(0, 8) + "...");
+    }
+
+    const savedPage = localStorage.getItem("currentPage");
+    if (savedPage) {
+      setCurrentPage(savedPage);
     }
   }, []);
 
@@ -57,14 +62,14 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
   const styles: { [key: string]: React.CSSProperties } = {
     hiddenModal: {
       opacity: 0,
-      visibility: 'hidden',
-      transition: 'opacity 0.3s, visibility 0.3s',
+      visibility: "hidden",
+      transition: "opacity 0.3s, visibility 0.3s",
     },
     visibleModal: {
       opacity: 1,
-      visibility: 'visible', 
-      transition: 'opacity 0.3s, visibility 0.3s',
-    }
+      visibility: "visible",
+      transition: "opacity 0.3s, visibility 0.3s",
+    },
   };
 
   return (
@@ -85,7 +90,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
           }
         `}
       </style>
-      
+
       {/* Top navigation bar */}
       <header className="header">
         <div className="logoBox">
@@ -105,14 +110,11 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
       <div className="main-content">
         {/* Sidebar */}
         <nav className="sidebar">
-            
           {/* User info section */}
           <div className="user-info">
             <div className="info-container">
               <span className="info-label">Current Account: </span>
-              <div className="info-name">
-                {publicKey || "Current User"}
-              </div>
+              <div className="info-name">{publicKey || "Current User"}</div>
             </div>
           </div>
 
@@ -144,26 +146,24 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
             >
               Report
             </li>
-            <li 
+            <li
               className={`sidebar-item ${
-                currentPage === 'cashflow' ? 'active' : ""
+                currentPage === "cashflow" ? "active" : ""
               }`}
-              onClick={() => setCurrentPage('cashflow')}
+              onClick={() => setCurrentPage("cashflow")}
             >
               Cash Flow
             </li>
-            <li 
+            <li
               className={`sidebar-item ${
-                currentPage === 'networth' ? 'active' : ""
+                currentPage === "networth" ? "active" : ""
               }`}
-              onClick={() => setCurrentPage('networth')}
+              onClick={() => setCurrentPage("networth")}
             >
               Net Worth
             </li>
           </ul>
         </nav>
-
-        
 
         {/* Central content area */}
         <div className="content">
@@ -179,8 +179,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
       </div>
 
       {/* Transaction Form Modal */}
-      <Modal 
-        show={showTransactionModal} 
+      <Modal
+        show={showTransactionModal}
         onHide={handleCloseModal}
         dialogClassName="modal"
       >
@@ -188,7 +188,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
           <Modal.Title>Create New Transaction</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <TransactionForm 
+          <TransactionForm
             onLogout={onLogout}
             token={token}
             hideHeading={true}

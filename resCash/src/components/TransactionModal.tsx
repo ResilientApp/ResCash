@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react"; 
+import React, { useState, useEffect, useRef } from "react";
 import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import TransactionForm from "./TransactionForm";
@@ -28,7 +28,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   transaction,
   onClose,
   onSave,
-  
 }) => {
   const recipientAddress: string =
     "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
@@ -41,7 +40,10 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
-    if (transaction && JSON.stringify(formData) !== JSON.stringify(transaction)) {
+    if (
+      transaction &&
+      JSON.stringify(formData) !== JSON.stringify(transaction)
+    ) {
       setFormData(transaction);
     }
   }, [transaction]);
@@ -55,24 +57,28 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     }
   };
 
+  const handleReload = () => {
+    window.location.reload();
+  };
+
   const handleSave = async () => {
     try {
-        const token = sessionStorage.getItem('token');
-        const response = await fetch(
-          `http://localhost:8099/api/transactions/updateTransaction/${formData._id}`,
-          {
-            method: "PUT",
-            headers: {
-              "Content-Type": "application/json",
-              'Authorization': `Bearer ${token}`
-            },
-            body: JSON.stringify({
-              ...formData,
-              amount: Number(formData.amount)
-            }),
-          }
-        );
-    
+      const token = sessionStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:8099/api/transactions/updateTransaction/${formData._id}`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({
+            ...formData,
+            amount: Number(formData.amount),
+          }),
+        }
+      );
+
       if (!response.ok) {
         throw new Error("Failed to update transaction");
       }
@@ -92,25 +98,25 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
 
   const handleDelete = async () => {
     try {
-      const token = sessionStorage.getItem('token');
+      const token = sessionStorage.getItem("token");
       const response = await fetch(
         `http://localhost:8099/api/transactions/deleteTransaction/${transaction._id}`,
         {
-          method: 'DELETE',
+          method: "DELETE",
           headers: {
-            'Authorization': `Bearer ${token}`,
+            Authorization: `Bearer ${token}`,
           },
         }
       );
-  
+
       if (!response.ok) {
-        throw new Error('Failed to delete transaction');
+        throw new Error("Failed to delete transaction");
       }
-  
+
       const result = await response.json();
       if (result.success) {
         console.log("Transaction deleted successfully!");
-        
+
         if (sdkRef && sdkRef.current) {
           const deletedTransaction = result.deletedTransaction;
           const newTransactionData = {
@@ -126,78 +132,87 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
             recipient: recipientAddress,
           });
         }
-  
+
         console.log("Transaction deleted successfully.");
         setShowModal(true);
-        
+
         onClose(); // Close the modal after saving
+
+        localStorage.setItem("currentPage", "turnover");
         // Refresh the page
-        //window.location.reload();  
+        window.location.reload();
       } else {
         throw new Error(result.message);
       }
     } catch (err) {
-      console.error('Error deleting transaction:', err);
+      console.error("Error deleting transaction:", err);
       setModalTitle("Error");
-      setModalMessage('Failed to delete transaction');
+      setModalMessage("Failed to delete transaction");
       setShowModal(true);
     }
   };
-  
-  
-
 
   return (
     <>
-        <Modal show={true} onHide={onClose}>
+      <Modal show={true} onHide={onClose}>
         <Modal.Header closeButton>
-            <Modal.Title>Edit Transaction</Modal.Title>
+          <Modal.Title>Edit Transaction</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-            <div style={{ display: "flex", flexDirection: "column" }}>
+          <div style={{ display: "flex", flexDirection: "column" }}>
             <TransactionForm
-                initialData={formData}
-                onFormChange={handleFormChange}
-                hideSubmitButton={true} // Hide submit button in modal
-                hideHeading={true} // Hide heading in modal
-                token={null}
-                onLogout={() => console.log("Logout")}
+              initialData={formData}
+              onFormChange={handleFormChange}
+              hideSubmitButton={true} // Hide submit button in modal
+              hideHeading={true} // Hide heading in modal
+              token={null}
+              onLogout={() => console.log("Logout")}
             />
-            </div>
+          </div>
 
-            {/* CSS Injection */}
-            <style>
+          {/* CSS Injection */}
+          <style>
             {`
                 .form-container h2.heading {
                 display: none !important;
                 }
                 form button[type="submit"] {
                 display: none !important;
-                }`
-            }
-            </style>
-
+                }`}
+          </style>
         </Modal.Body>
         <Modal.Footer>
-            <Button variant="secondary" onClick={() => setShowDeleteConfirm(true)}>
-                Delete
-            </Button>
-            <Button variant="primary" onClick={handleSave}>
-                Save Changes
-            </Button>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDeleteConfirm(true)}
+          >
+            Delete
+          </Button>
+          <Button variant="primary" onClick={handleSave}>
+            Save Changes
+          </Button>
         </Modal.Footer>
-        </Modal>
+      </Modal>
 
-        {/* Delete Confirmation Modal */}
-      <Modal show={showDeleteConfirm} onHide={() => setShowDeleteConfirm(false)} centered className="custom-modal">
+      {/* Delete Confirmation Modal */}
+      <Modal
+        show={showDeleteConfirm}
+        onHide={() => setShowDeleteConfirm(false)}
+        centered
+        className="custom-modal"
+      >
         <Modal.Header closeButton className="custom-modal-header">
           <Modal.Title>Confirm Delete</Modal.Title>
         </Modal.Header>
         <Modal.Body className="custom-modal-body">
-          Are you sure you want to delete this transaction? This action cannot be undone.
+          Are you sure you want to delete this transaction? This action cannot
+          be undone.
         </Modal.Body>
         <Modal.Footer className="custom-modal-footer">
-          <Button variant="secondary" onClick={() => setShowDeleteConfirm(false)}>
+          <Button
+            variant="secondary"
+            onClick={() => setShowDeleteConfirm(false)}
+          >
             Cancel
           </Button>
           <Button variant="danger" onClick={handleDelete}>
@@ -205,7 +220,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
           </Button>
         </Modal.Footer>
       </Modal>
-
     </>
   );
 };
@@ -226,4 +240,3 @@ function setModalTitle(arg0: string) {
 function setModalMessage(arg0: string) {
   throw new Error("Function not implemented.");
 }
-
