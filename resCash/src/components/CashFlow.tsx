@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import CashFlowChart from './CashFlowChart'; 
+import CashFlowChart from './CashFlowChart';
 import './CashFlowStyle.css';
-import NetWorthChart from './NetWorthChart';
 
 interface Transaction {
     _id: string;
@@ -30,7 +29,7 @@ const CashFlow: React.FC = () => {
                     throw new Error('No authentication token found');
                 }
 
-                // 发起请求
+                // request
                 const response = await fetch('http://localhost:8099/api/read/userTransactions', {
                     method: 'GET',
                     headers: {
@@ -45,15 +44,20 @@ const CashFlow: React.FC = () => {
 
                 const result = await response.json();
                 if (result.message === 'No transactions found') {
-                    setCashFlowData([]); //set empty data
+                    setCashFlowData([]); // empty data
                 } else {
-                    setCashFlowData(result); // fetch new data
+                    // sort by time
+                    const sortedData = result.sort(
+                        (a: Transaction, b: Transaction) =>
+                            new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+                    );
+                    setCashFlowData(sortedData); // set sorted time
                 }
             } catch (err: any) {
                 console.error('Error fetching cash flow data:', err);
                 setError(err.message);
             } finally {
-                setLoading(false); // end
+                setLoading(false); // stop loading 
             }
         };
 
@@ -74,13 +78,10 @@ const CashFlow: React.FC = () => {
             {cashFlowData.length === 0 ? (
                 <div>No Data Found</div>
             ) : (
-                <>
                 <CashFlowChart data={cashFlowData} />
-                </>
             )}
         </div>
     );
 };
 
 export default CashFlow;
-
