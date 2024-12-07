@@ -144,7 +144,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
             >
               Report
             </li>
-            <li className="sidebar-item">Visualization</li>
             <li 
               className={`sidebar-item ${
                 currentPage === 'cashflow' ? 'active' : ""

@@ -275,7 +275,10 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     onLogout();
   };
 
-  const handleCloseModal = () => setShowModal(false);
+  const handleCloseModal = () => {
+    setShowModal(false);
+    window.location.reload();
+  };
 
   return (
     <>

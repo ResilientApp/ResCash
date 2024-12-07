@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './readStyle.css';
 import TransactionModal from './TransactionModal';
+// import { Transaction } from 'mongodb';
 interface Transaction {
   _id: string;
   transactionID: string;
@@ -89,10 +90,8 @@ const Read = () => {
   };
 
   const handleCloseModal = (wasDeleted = false) => {
-    if (wasDeleted) {
-      
-      // Remove the deleted transaction from the data
-      setData(prevData => prevData.filter(t => t._id !== selectedTransaction?._id));
+    if (wasDeleted && selectedTransaction) {
+      setData(prevData => prevData.filter(transaction => transaction._id !== selectedTransaction._id));
     }
     setShowModal(false);
     setSelectedTransaction(null);

@@ -115,11 +115,16 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
           {/* Left Column */}
           <div className="left-column">
             <div className="summary-container">
-                <h2 className="page-title">Net Worth</h2>
+                <div className="heading-container-main">
+                    <h2 className="page-title">Net Worth</h2>
+                </div>
                 <h2 className="page-title">${summary.netWorth.toFixed(2)}</h2>
+                
             </div>
             <div className="recent-transactions-container">
-                <h2 className="page-title">Recent Transactions</h2>
+                <div className="heading-container-main">
+                    <h2 className="page-title">Recent Transactions</h2>
+                </div>
                 <table className="data-table">
                     <tbody>
                         {data.length === 0 ? (

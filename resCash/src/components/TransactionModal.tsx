@@ -132,7 +132,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
         
         onClose(); // Close the modal after saving
         // Refresh the page
-        window.location.reload();  
+        //window.location.reload();  
       } else {
         throw new Error(result.message);
       }
