@@ -130,7 +130,12 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-bottom: 15px;
   background-color: #C6E7FF;
+}
+
+.heading-container-main h2 {
+  margin-top: 20px;
 }
 
 .heading {
@@ -459,6 +464,7 @@
   opacity: 1;
   background-color: transparent;
   background: none !important;
+  justify-content: center;
 }
 
 .content-layout {
@@ -467,14 +473,12 @@
   color: #1a1a2e; /* Dark font color */
   padding: 20px;
   width: calc(100% - 300px);
-  border-radius: 0px;
-  border: 0px solid #c6e7ff;
-  margin-top: 0px;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
   min-width: 1100px;
   max-height: 100vh;
+  justify-content: center;
 }
 
 .left-column,
@@ -502,8 +506,8 @@
 .transaction-form,
 .recent-transactions-container {
   background-color: #E1F5FE;
-  margin-bottom: 20px;
   padding: 20px;
+  margin-bottom: 20px;
   border-radius: 8px;
   border: 1px solid #c6e7ff;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -512,7 +516,7 @@
 .summary-container,
 .cashflow-container {
   flex: none;
-  height: 20%;
+  height: 19%;
 }
 
 .transaction-form {
@@ -521,7 +525,7 @@
 
 .recent-transactions-container {
   flex: none;
-  height: 80%;
+  height: 79%;
 }
 
 /* CashFlow Component Styles */
