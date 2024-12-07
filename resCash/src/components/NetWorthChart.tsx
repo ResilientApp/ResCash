@@ -28,20 +28,43 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         const ctx = canvas.getContext('2d');
         if (!ctx) return;
 
-        // Set canvas dimensions
-        const width = 800;
-        const height = 400;
+        // Set larger canvas dimensions
+        const width = 1200;
+        const height = 600;
         canvas.width = width;
         canvas.height = height;
 
-        // Clear previous content
+        // Clear previous content and set white background
         ctx.clearRect(0, 0, width, height);
+        ctx.fillStyle = '#D4F6FF'; // Set background to white
+        ctx.fillRect(0, 0, width, height);
+        //draw a boarder
+        const borderRadius = 20;
+        const borderWidth = 3;
+
+        ctx.strokeStyle = '#5DB9FF'; 
+        ctx.lineWidth = borderWidth;
+
+        ctx.beginPath();
+        ctx.moveTo(borderRadius, borderWidth / 2);
+        ctx.lineTo(width - borderRadius, borderWidth / 2);
+        ctx.arcTo(width - borderWidth / 2, borderWidth / 2, width - borderWidth / 2, borderRadius, borderRadius);
+        ctx.lineTo(width - borderWidth / 2, height - borderRadius);
+        ctx.arcTo(width - borderWidth / 2, height - borderWidth / 2, width - borderRadius, height - borderWidth / 2, borderRadius);
+        ctx.lineTo(borderRadius, height - borderWidth / 2);
+        ctx.arcTo(borderWidth / 2, height - borderWidth / 2, borderWidth / 2, height - borderRadius, borderRadius);
+        ctx.lineTo(borderWidth / 2, borderRadius);
+        ctx.arcTo(borderWidth / 2, borderWidth / 2, borderRadius, borderWidth / 2, borderRadius);
+        ctx.closePath();
+        ctx.stroke();
+
+
 
         // Limit data to the last 30 entries
         const filteredData = data.slice(-30);
 
         // Set margins
-        const margin = { top: 20, right: 30, bottom: 80, left: 60 };
+        const margin = { top: 40, right: 200, bottom: 100, left: 80 };
         const chartWidth = width - margin.left - margin.right;
         const chartHeight = height - margin.top - margin.bottom;
 
@@ -84,10 +107,6 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         // X axis and Y axis scale calculations
         const xStep = chartWidth / labels.length;
         const yScale = chartHeight / (maxY - minY);
-
-        // Set background color
-        ctx.fillStyle = '#D4F6FF'; // Dark background
-        ctx.fillRect(0, 0, width, height);
 
         // Draw grid lines and Y axis ticks
         ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; // Light grid lines
