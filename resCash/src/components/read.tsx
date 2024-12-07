@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './readStyle.css';
 import TransactionModal from './TransactionModal';
-// import { Transaction } from 'mongodb';
+
 interface Transaction {
   _id: string;
   transactionID: string;
@@ -32,7 +32,7 @@ const Read = () => {
         if (!token) {
           throw new Error('No authentication token found');
         }
-    
+
         const response = await fetch('http://localhost:8099/api/read/userTransactions', {
           method: 'GET',
           headers: {
@@ -40,16 +40,20 @@ const Read = () => {
             Authorization: `Bearer ${token}`, // Include the token in the Authorization header
           },
         });
-    
+
         if (!response.ok) {
           throw new Error(`Network response failed, status code: ${response.status}`);
         }
-    
+
         const result = await response.json(); // Parse the JSON response
         if (result.message === 'No transactions found') {
           setData([]); // Set an empty array to indicate no transactions
         } else {
-          setData(result); // Set the fetched transactions into state
+          // Sort transactions by timestamp in ascending order
+          const sortedData = result.sort(
+            (a: Transaction, b: Transaction) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+          );
+          setData(sortedData); // Set the sorted transactions into state
         }
       } catch (err: any) {
         console.error('Data retrieval error:', err);
@@ -58,11 +62,10 @@ const Read = () => {
         setLoading(false); // Stop loading after the fetch
       }
     };
-  
+
     // Fetch user-specific transactions on component mount
     fetchUserTransactions();
   }, []);
-  
 
   if (loading) {
     return <div>Loading...</div>;
@@ -76,9 +79,8 @@ const Read = () => {
     setSelectedTransaction(transaction);
     setShowModal(true);
   };
-  
-  const handleSave = (updatedTransaction: Transaction) => {
 
+  const handleSave = (updatedTransaction: Transaction) => {
     // Update the transaction in the data array
     console.log('handleSave called');
     setData((prevData) =>
@@ -90,8 +92,9 @@ const Read = () => {
   };
 
   const handleCloseModal = (wasDeleted = false) => {
-    if (wasDeleted && selectedTransaction) {
-      setData(prevData => prevData.filter(transaction => transaction._id !== selectedTransaction._id));
+    if (wasDeleted) {
+      // Remove the deleted transaction from the data
+      setData(prevData => prevData.filter(t => t._id !== selectedTransaction?._id));
     }
     setShowModal(false);
     setSelectedTransaction(null);
@@ -151,3 +154,4 @@ const Read = () => {
 };
 
 export default Read;
+
