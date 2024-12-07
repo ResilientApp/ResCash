@@ -130,7 +130,7 @@ router.delete("/deleteTransaction/:id", async (req, res) => {
 
     res.status(200).json({
       success: true,
-      message: "Transaction deleted successfully!!",
+      message: "Transaction deleted successfully!",
       deletedTransaction,
     });
   } catch (error) {

@@ -28,6 +28,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   transaction,
   onClose,
   onSave,
+  
 }) => {
   const recipientAddress: string =
     "2ETHT1JVJaFswCcKP9sm5uQ8HR4AGqQvz8gVQHktQoWA";
@@ -37,6 +38,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   const [modalTitle, setModalTitle] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
   const [showModal, setShowModal] = useState<boolean>(false);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
     if (transaction && JSON.stringify(formData) !== JSON.stringify(transaction)) {
@@ -52,7 +54,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       }));
     }
   };
-  
 
   const handleSave = async () => {
     try {
@@ -109,26 +110,29 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       const result = await response.json();
       if (result.success) {
         console.log("Transaction deleted successfully!");
-        const deletedTransaction = result.deletedTransaction;
-        const newTransactionData = {
-          deletedTransaction,
-          is_deleted: true,
-          deleted_transactionID: transaction.transactionID,
-        };
         
         if (sdkRef && sdkRef.current) {
-          sdkRef.current.sendMessage({  
-            type: "commit", 
-            direction: "commit",  
-            amount: deletedTransaction.amount,  
-            data: newTransactionData,  
-            recipient: recipientAddress,  
-          }); 
+          const deletedTransaction = result.deletedTransaction;
+          const newTransactionData = {
+            deletedTransaction,
+            is_deleted: true,
+            deleted_transactionID: transaction.transactionID,
+          };
+          sdkRef.current.sendMessage({
+            type: "commit",
+            direction: "commit",
+            amount: deletedTransaction.amount,
+            data: newTransactionData,
+            recipient: recipientAddress,
+          });
         }
-        console.log("New Transanctoin ID: ", )
-        console.log("New Transaction Data:", newTransactionData);
+  
+        console.log("Transaction deleted successfully.");
         setShowModal(true);
-        onClose(); // Close the modal after successful deletion
+        
+        onClose(); // Close the modal after saving
+        // Refresh the page
+        window.location.reload();  
       } else {
         throw new Error(result.message);
       }
@@ -139,6 +143,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       setShowModal(true);
     }
   };
+  
   
 
 
