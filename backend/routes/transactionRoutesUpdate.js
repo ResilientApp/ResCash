@@ -74,10 +74,60 @@ router.put("/updateTransaction/:id", async (req, res) => {
     );
 
     if (!updatedTransaction) {
-      return res.status(404).json({ 
-        success: false, 
-        message: "Transaction not found after update" 
+      return res.status(404).json({
+        success: false,
+        message: "Transaction not found after update",
       });
+    }
+
+    // GraphQL mutation to update transaction in ResilientDB
+    const graphQLEndpoint = 'http://76.158.247.201:8070/graphql'; 
+
+    const mutation = `
+      mutation UpdateTransaction($id: ID!, $input: TransactionInput!) {
+        updateTransaction(id: $id, input: $input) {
+          id
+          amount
+          transactionType
+          category
+          currency
+          notes
+          merchant
+          paymentMethod
+          timestamp
+        }
+      }
+    `;
+
+    const variables = {
+      id: id,
+      input: {
+        amount: amount,
+        transactionType: transactionType,
+        category: category,
+        currency: currency,
+        notes: notes,
+        merchant: merchant,
+        paymentMethod: paymentMethod,
+        timestamp: timestamp ? new Date(timestamp) : null,
+      },
+    };
+
+    // Execute the GraphQL mutation
+    const graphqlResponse = await fetch(graphQLEndpoint, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        query: mutation,
+        variables: variables,
+      }),
+    });
+
+    const graphqlResult = await graphqlResponse.json();
+
+    if (graphqlResult.errors) {
+      console.error("Error updating transaction in ResilientDB:", graphqlResult.errors);
+      // Optionally handle the error or return a response
     }
 
     res.status(200).json({
