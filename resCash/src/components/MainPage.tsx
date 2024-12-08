@@ -28,6 +28,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
       setPublicKey(storedKey.substring(0, 8) + "...");
     }
 
+    localStorage.setItem("currentPage", "home");
     const savedPage = localStorage.getItem("currentPage");
     if (savedPage) {
       setCurrentPage(savedPage);

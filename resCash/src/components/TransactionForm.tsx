@@ -277,6 +277,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
   const handleCloseModal = () => {
     setShowModal(false);
+    localStorage.setItem("currentPage", "home");
     window.location.reload();
   };
 

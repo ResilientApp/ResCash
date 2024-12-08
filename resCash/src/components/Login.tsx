@@ -141,9 +141,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       setModalMessage("SDK is not initialized.");
       setShowModal(true);
     }
+    
   };
 
-  const handleCloseModal = () => setShowModal(false);
+  const handleCloseModal = () => {
+    setShowModal(false);
+    localStorage.setItem("currentPage", "home");
+  };
 
   return (
     <>

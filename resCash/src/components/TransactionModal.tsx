@@ -65,7 +65,7 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     try {
       const token = sessionStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8099/api/transactions/updateTransaction/${formData._id}`,
+        `http://localhost:8099/api/updateTransactions/updateTransaction/${formData._id}`,
         {
           method: "PUT",
           headers: {
@@ -226,17 +226,3 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
 
 export default TransactionModal;
 
-function setTimestamp(currentTimestamp: any) {
-  throw new Error("Function not implemented.");
-}
-function setShowModal(arg0: boolean) {
-  throw new Error("Function not implemented.");
-}
-
-function setModalTitle(arg0: string) {
-  throw new Error("Function not implemented.");
-}
-
-function setModalMessage(arg0: string) {
-  throw new Error("Function not implemented.");
-}

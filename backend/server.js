@@ -75,5 +75,5 @@ app.listen(port, () => {
 app.use("/api/transactions", transactionRoutes);
 app.use("/api/reports", transactionRoutesReport);
 app.use("/api/read", transactionRead);
-app.use("/api/transactions", transactionRoutesUpdate);
+app.use("/api/updateTransactions", transactionRoutesUpdate);
 app.use("/api/deleteTransactions", transactionRoutesDelete);
