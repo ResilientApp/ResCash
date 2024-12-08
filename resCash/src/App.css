@@ -131,6 +131,7 @@
   justify-content: center;
   align-items: center;
   margin-bottom: 15px;
+  border-radius: 8px;
   background-color: #C6E7FF;
 }
 
@@ -516,7 +517,7 @@
 .summary-container,
 .cashflow-container {
   flex: none;
-  height: 19%;
+  height: 23%;
 }
 
 .transaction-form {
@@ -525,7 +526,7 @@
 
 .recent-transactions-container {
   flex: none;
-  height: 79%;
+  height: 75%;
 }
 
 /* CashFlow Component Styles */

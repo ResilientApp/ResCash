@@ -126,6 +126,14 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
                     <h2 className="page-title">Recent Transactions</h2>
                 </div>
                 <table className="data-table">
+                    <thead>
+                        <tr>
+                            <th>Time</th>
+                            <th>Category</th>
+                            <th>Type</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         {data.length === 0 ? (
                         <tr>
@@ -134,9 +142,9 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
                         ) : (
                         data.map((transaction) => (
                             <tr key={transaction._id}>
-                            <td>{new Date(transaction.timestamp).toLocaleString()}</td>
+                            <td>{new Date(transaction.timestamp).toLocaleDateString()}</td>
                             <td>{transaction.category}</td>
-                            <td>{transaction.merchant}</td>
+                            <td>{transaction.transactionType}</td>
                             <td>{transaction.amount}</td>
                             </tr>
                         ))
