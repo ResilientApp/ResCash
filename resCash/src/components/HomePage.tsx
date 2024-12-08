@@ -89,7 +89,11 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
         if (result.message === 'No transactions found') {
             setData([]); // Set an empty array to indicate no transactions
         } else {
-            setData(result); // Set the fetched transactions into state
+            // Sort transactions by timestamp in ascending order
+            const sortedData = result.sort(
+                (a: Transaction, b: Transaction) => new Date(a.timestamp).getTime() - new Date(b.timestamp).getTime()
+            );
+            setData(sortedData); // Set the fetched transactions into state
         }
         } catch (err: any) {
             console.error('Data retrieval error:', err);
