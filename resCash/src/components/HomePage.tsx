@@ -1,12 +1,6 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
-import Modal from "react-bootstrap/Modal";
-import Sidebar from "./Sidebar";
 import TransactionForm from "./TransactionForm"; // Form component
-import NotificationModal from "./NotificationModal"; // Modal component
-import Read from "./read"; // Import Read component
-import CashFlow from "./CashFlow"; // Import CashFlow component
-import Report from "./reports";
 
 interface MainPageProps {
     token: string | null;
@@ -74,7 +68,7 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
         try {
             // Retrieve JWT token
             const token = sessionStorage.getItem('token');
-            setLoading(true); // Ensure loading state is active while fetching data
+            setLoading(true);
             if (!token) {
             throw new Error('No authentication token found');
             }

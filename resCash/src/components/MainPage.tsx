@@ -1,23 +1,12 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
 import Modal from "react-bootstrap/Modal";
-import Sidebar from "./Sidebar";
 import TransactionForm from "./TransactionForm"; // Form component
-import NotificationModal from "./NotificationModal"; // Modal component
 import Read from "./read"; // Import Read component
 import CashFlow from "./CashFlow"; // Import CashFlow component
 import Report from "./reports";
 import HomePage from "./HomePage";
 import NetWorth from "./NetWorth";
-// import {
-//   Chart as ChartJS,
-//   LineElement,
-//   CategoryScale,
-//   LinearScale,
-//   PointElement,
-// } from "chart.js";
-
-// ChartJS.register(LineElement, CategoryScale, LinearScale, PointElement);
 
 // Define the type for props
 interface MainLayoutProps {
