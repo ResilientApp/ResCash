@@ -93,10 +93,22 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
 
         const netNetWorth = incomes.map((income, index) => income - expenses[index]);
         
+        // Sort data by date
+        const sortedLabels = labels.sort((a, b) => {
+            const [aMonth, aDay] = a.split('-').map(Number);
+            const [bMonth, bDay] = b.split('-').map(Number);
+            const aDate = new Date(2023, aMonth - 1, aDay); // Assuming the year is 2023
+            const bDate = new Date(2023, bMonth - 1, bDay);
+            return aDate.getTime() - bDate.getTime();
+        });
+
+        const sortedIncomes = sortedLabels.map((label) => groupedData[label].income);
+        const sortedExpenses = sortedLabels.map((label) => groupedData[label].expense);
+
         const netWorth = [];
         let cumulativeNetWorth = 0;
-        for (let i = 0; i < incomes.length; i++) {
-            cumulativeNetWorth += incomes[i] - expenses[i];
+        for (let i = 0; i < sortedIncomes.length; i++) {
+            cumulativeNetWorth += sortedIncomes[i] - sortedExpenses[i];
             netWorth.push(cumulativeNetWorth);
         }
 
