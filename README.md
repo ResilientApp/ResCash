@@ -59,7 +59,7 @@
      ```
    - Create a `.env` file with the following configuration:
      ```
-     MONGODB_URI=mongodb://quiet98k:Alsnqtdsswksy1!@76.158.247.201:27017/
+     MONGODB_URI=mongodb://76.158.247.201:27017/
      MONGODB_DB_NAME=resilientDB
      GRAPHQL_URI=http://76.158.247.201:8070/graphql
      CROW_SERVER_URI=http://76.158.247.201:18000/v1/transactions
