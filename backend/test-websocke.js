@@ -1,7 +1,7 @@
 import WebSocket from 'ws';
 
 // Replace with your WebSocket endpoint
-const wsUrl = 'ws://76.158.247.201:18000/blockupdatelistener';
+const wsUrl = 'ws://35.193.4.170:18000/blockupdatelistener';
 
 const ws = new WebSocket(wsUrl);
 
@@ -24,7 +24,7 @@ ws.on('message', (data) => {
         if (message === 'Update blocks') {
             console.log('Fetching new blocks...');
     // Replace with actual API call logic
-    fetch('http://76.158.247.201:18000/v1/blocks')
+    fetch('http://35.193.4.170:18000/v1/blocks')
     .then((response) => response.json())
     .then((data) => {
         console.log('Fetched blocks from API:');

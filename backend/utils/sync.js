@@ -10,7 +10,7 @@ const mongoConfig = {
 };
 
 const resilientDBConfig = {
-    baseUrl: 'resilientdb://76.158.247.201:18000',
+    baseUrl: 'resilientdb://35.193.4.170:18000',
     httpSecure: false,
     wsSecure: false,
   };

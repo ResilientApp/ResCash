@@ -81,7 +81,7 @@ router.put("/updateTransaction/:id", async (req, res) => {
     }
 
     // GraphQL mutation to update transaction in ResilientDB
-    const graphQLEndpoint = 'http://76.158.247.201:8070/graphql'; 
+    const graphQLEndpoint = 'http://35.193.4.170:8000/graphql'; 
 
     const mutation = `
       mutation UpdateTransaction($id: ID!, $input: TransactionInput!) {

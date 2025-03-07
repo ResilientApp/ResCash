@@ -20,6 +20,8 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     sdkRef.current = new ResVaultSDK();
   }
 
+  console.log("SDK initialized:", sdkRef.current);
+
   const animationContainer = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -130,18 +132,38 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     };
   }, [onLogin]);
 
+  // Test if message listener is working by adding this to your component
+  useEffect(() => {
+    console.log("Testing SDK message listener");
+    const testMessage = () => {
+      console.log("Sending test message to SDK");
+      if (sdkRef.current) {
+        sdkRef.current.sendMessage({ type: "test" });
+      }
+    };
+    // Send a test message after a short delay
+    const timer = setTimeout(testMessage, 2000);
+    return () => clearTimeout(timer);
+  }, []);
+
   const handleAuthentication = () => {
+    console.log("Login button clicked, sending message to SDK");
     if (sdkRef.current) {
+      console.log("SDK reference exists, sending message:", {
+        type: "login",
+        direction: "login",
+      });
       sdkRef.current.sendMessage({
         type: "login",
         direction: "login",
       });
+      console.log("Message sent to SDK");
     } else {
+      console.error("SDK reference does not exist");
       setModalTitle("Error");
       setModalMessage("SDK is not initialized.");
       setShowModal(true);
     }
-    
   };
 
   const handleCloseModal = () => {
