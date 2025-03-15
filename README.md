@@ -86,3 +86,5 @@
 ## Notes
 
 - Ensure all URIs are consistent between `.env` files and the ResVault extension.
+- There are also some URL you need to change inside the application.
+- Make sure update the URL of all the services used in this app to run it
