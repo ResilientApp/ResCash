@@ -16,11 +16,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [modalTitle, setModalTitle] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
 
+  // Initialize SDK if not already initialized
   if (!sdkRef.current) {
-    sdkRef.current = new ResVaultSDK();
+    sdkRef.current = new ResVaultSDK("*");
+    console.log("SDK initialized:", sdkRef.current);
   }
-
-  console.log("SDK initialized:", sdkRef.current);
 
   const animationContainer = useRef<HTMLDivElement>(null);
 
@@ -60,6 +60,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     transactionID: string
   ): Promise<string | null> => {
     try {
+      console.log("DEBUG: Fetching public key for transactionID:", transactionID);
       const response = await fetch(
         `http://localhost:8099/api/transactions/publicKey/${transactionID}`
       );
@@ -67,10 +68,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         throw new Error("Failed to fetch public key");
       }
       const data = await response.json();
-      console.log("Public Key:", data.publicKey);
+      console.log("DEBUG: Received public key:", data.publicKey);
       return data.publicKey; // Return the fetched public key
     } catch (error) {
-      console.error("Error fetching public key:", error);
+      console.error("DEBUG: Error fetching public key:", error);
       return null; // Return null in case of an error
     }
   };
@@ -80,19 +81,21 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     if (!sdk) return;
 
     const messageHandler = async (event: MessageEvent) => {
+      console.log("DEBUG: Message received from SDK:", event.data);
       const message = event.data;
       if (message && message.type === "FROM_CONTENT_SCRIPT") {
         if (message.data && message.data.success !== undefined) {
           if (message.data.success) {
-            const transactionID = message.data.data.postTransaction.id; // Extract Transaction ID
+            const transactionID = message.data.data?.postTransaction?.id; // Extract Transaction ID
             if (transactionID) {
-              console.log("Transaction ID:", transactionID);
+              console.log("DEBUG: Transaction ID received:", transactionID);
               sessionStorage.setItem("transactionID", transactionID); // Store Transaction ID in sessionStorage
 
               // Fetch public key using the Transaction ID
               const publicKey = await fetchPublicKey(transactionID);
               if (publicKey) {
                 sessionStorage.setItem("publicKey", publicKey);
+                console.log("DEBUG: Sending publicKey to backend for login:", publicKey);
                 // Send public key to backend login endpoint
                 const response = await fetch(
                   "http://localhost:8099/api/transactions/login",
@@ -105,40 +108,47 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   }
                 );
                 const data = await response.json();
+                console.log("DEBUG: Login response from backend:", data);
                 if (data.token) {
                   // Use the token returned by the backend
                   sessionStorage.setItem("token", data.token);
                   onLogin(data.token);
                 } else {
-                  console.error("Failed to retrieve token from backend");
+                  console.error("DEBUG: Failed to retrieve token from backend");
                 }
               } else {
-                console.error("Public key not retrieved successfully");
+                console.error("DEBUG: Public key not retrieved successfully");
               }
             } else {
-              console.error(
-                "Transaction ID not found in authentication response"
-              );
+              console.error("DEBUG: Transaction ID not found in auth response");
             }
+          } else {
+            console.error("DEBUG: Received failure message from SDK:", message);
           }
+        } else {
+          console.warn("DEBUG: Received message with unexpected format:", message);
         }
       }
     };
 
+    console.log("DEBUG: Adding SDK message listener");
     sdk.addMessageListener(messageHandler);
 
     return () => {
+      console.log("DEBUG: Removing SDK message listener");
       sdk.removeMessageListener(messageHandler);
     };
   }, [onLogin]);
 
-  // Test if message listener is working by adding this to your component
+  // Test if message listener is working by sending a test message to the SDK
   useEffect(() => {
-    console.log("Testing SDK message listener");
+    console.log("DEBUG: Testing SDK message listener");
     const testMessage = () => {
-      console.log("Sending test message to SDK");
+      console.log("DEBUG: Sending test message to SDK");
       if (sdkRef.current) {
         sdkRef.current.sendMessage({ type: "test" });
+      } else {
+        console.error("DEBUG: SDK reference is null during test message");
       }
     };
     // Send a test message after a short delay
@@ -146,20 +156,18 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     return () => clearTimeout(timer);
   }, []);
 
+  // Handle authentication button click: send login message to SDK
   const handleAuthentication = () => {
-    console.log("Login button clicked, sending message to SDK");
+    console.log("DEBUG: Login button clicked, sending login message to SDK");
     if (sdkRef.current) {
-      console.log("SDK reference exists, sending message:", {
+      console.log("DEBUG: SDK reference exists, sending message:", {
         type: "login",
         direction: "login",
       });
-      sdkRef.current.sendMessage({
-        type: "login",
-        direction: "login",
-      });
-      console.log("Message sent to SDK");
+      sdkRef.current.sendMessage({ type: "login", direction: "login" });
+      console.log("DEBUG: Login message sent to SDK");
     } else {
-      console.error("SDK reference does not exist");
+      console.error("DEBUG: SDK reference does not exist");
       setModalTitle("Error");
       setModalMessage("SDK is not initialized.");
       setShowModal(true);

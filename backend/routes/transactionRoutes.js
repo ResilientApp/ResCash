@@ -11,19 +11,55 @@ const router = express.Router();
 const JWT_SECRET = 'h@G7#29s*&ZfJx3M!1qN$X2L@jP9kQ%y5T';
 
 // Add login route
+// 带有调试日志的登录路由
 router.post("/login", async (req, res) => {
-  const { publicKey } = req.body;
+  console.log("DEBUG: Received POST /login request");
+  console.log("DEBUG: Request body:", req.body);
 
-  // Check if publicKey exists in the request body
+  const { publicKey } = req.body;
   if (!publicKey) {
+    console.log("DEBUG: Missing publicKey in request body");
     return res.status(400).json({ message: "Public key is required" });
   }
 
-  // Generate JWT with the publicKey
-  const token = jwt.sign({ publicKey }, JWT_SECRET, { expiresIn: "1h" });
+  try {
+    // 生成 JWT，并设置过期时间为 1 小时
+    const token = jwt.sign({ publicKey }, JWT_SECRET, { expiresIn: "1h" });
+    console.log("DEBUG: Generated JWT:", token);
 
-  // Return the token to the frontend
-  res.json({ token });
+    // 如果需要，也可以在 session 中存储 publicKey
+    if (req.session) {
+      req.session.publicKey = publicKey;
+      console.log("DEBUG: Updated session with publicKey:", req.session.publicKey);
+    }
+
+    res.json({ token });
+  } catch (err) {
+    console.error("DEBUG: Error generating JWT:", err);
+    res.status(500).json({ message: "Error generating token", error: err.message });
+  }
+});
+
+// 测试 token 的验证路由
+router.get("/testToken", (req, res) => {
+  console.log("DEBUG: Received GET /testToken request");
+
+  const authHeader = req.headers.authorization;
+  console.log("DEBUG: Authorization header:", authHeader);
+
+  if (!authHeader) {
+    return res.status(401).json({ message: "Authorization header missing" });
+  }
+  const token = authHeader.split(" ")[1];
+
+  try {
+    const decoded = jwt.verify(token, JWT_SECRET);
+    console.log("DEBUG: Decoded token:", decoded);
+    res.json({ valid: true, decoded });
+  } catch (err) {
+    console.error("DEBUG: Token verification failed:", err);
+    res.status(401).json({ valid: false, message: "Invalid token", error: err.message });
+  }
 });
 
 router.get("/checkSession", (req, res) => {
