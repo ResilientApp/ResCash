@@ -22,9 +22,10 @@ ResCash is built on a modern and robust tech stack, ensuring scalability, reliab
    - Follow the instructions [here](https://blog.resilientdb.com/2023/09/21/ResVault.html).
    - Ensure that the ResVault extension is connected to:
      ```
-     76.158.247.201:8070
+     [76.158.247.201:8070](http://35.193.4.170:8000/)
      ```
      _(You may substitute this URI with your own GraphQL server URI if needed.)_
+     _(If you would like to set up your own GraphQL server, make sure it is running on all address (0.0.0.0))_
 
 2. **Install Node.js and npm**
    - Refer to the [official guide](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
