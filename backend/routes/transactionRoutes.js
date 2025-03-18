@@ -11,7 +11,6 @@ const router = express.Router();
 const JWT_SECRET = 'h@G7#29s*&ZfJx3M!1qN$X2L@jP9kQ%y5T';
 
 // Add login route
-// 带有调试日志的登录路由
 router.post("/login", async (req, res) => {
   console.log("DEBUG: Received POST /login request");
   console.log("DEBUG: Request body:", req.body);
@@ -23,11 +22,11 @@ router.post("/login", async (req, res) => {
   }
 
   try {
-    // 生成 JWT，并设置过期时间为 1 小时
+    // Generate a JWT token with the publicKey
     const token = jwt.sign({ publicKey }, JWT_SECRET, { expiresIn: "1h" });
     console.log("DEBUG: Generated JWT:", token);
 
-    // 如果需要，也可以在 session 中存储 publicKey
+    // Store the publicKey in the session
     if (req.session) {
       req.session.publicKey = publicKey;
       console.log("DEBUG: Updated session with publicKey:", req.session.publicKey);
@@ -40,7 +39,7 @@ router.post("/login", async (req, res) => {
   }
 });
 
-// 测试 token 的验证路由
+// Test route to verify the token
 router.get("/testToken", (req, res) => {
   console.log("DEBUG: Received GET /testToken request");
 
