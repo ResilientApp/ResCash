@@ -15,7 +15,8 @@ import mongoose from "mongoose"; // Or MongoDB's native driver
 dotenv.config();
 
 const app = express();
-const port = 8099;
+const port = process.env.PORT || 8099;
+const host = "127.0.0.1";
 
 const mongoURI = process.env.MONGODB_URI; // Replace with your MongoDB URI
 mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -42,15 +43,19 @@ app.use(
     cookie: { secure: false }, // Set to true if using HTTPS
   })
 );
-// Initialize ResilientDB to MongoDB synchronization
-(async () => {
+// Initialize ResilientDB to MongoDB synchronization (skip when disabled)
+if (process.env.ENABLE_RESILIENT_SYNC !== "false") {
+  (async () => {
     try {
-        await sync.initialize();
-        console.log('Synchronization initialized.');
+      await sync.initialize();
+      console.log("Synchronization initialized.");
     } catch (error) {
-        console.error('Error during sync initialization:', error);
+      console.error("Error during sync initialization:", error);
     }
-})();
+  })();
+} else {
+  console.log("ResilientDB synchronization disabled for this environment.");
+}
 
 
 // Direct Test Routes without any prefix
@@ -68,8 +73,8 @@ db.once("open", () => {
   console.log("MongoDB connection established");
 });
 
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+app.listen(port, host, () => {
+  console.log(`Server running at http://${host}:${port}`);
 });
 
 app.use("/api/transactions", transactionRoutes);

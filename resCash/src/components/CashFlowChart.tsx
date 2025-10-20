@@ -36,26 +36,20 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
 
         // Clear previous content and set white background
         ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = '#D4F6FF'; // Set background to white
+        ctx.fillStyle = '#ffffff'; // White background
         ctx.fillRect(0, 0, width, height);
-        //draw a boarder
-        const borderRadius = 20;
-        const borderWidth = 3;
-
-        ctx.strokeStyle = '#5DB9FF'; // 蓝色边框颜色
+        
+        // Draw rounded border with gradient
+        const borderRadius = 15;
+        const borderWidth = 2;
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#c6e7ff');
+        gradient.addColorStop(1, '#80bdff');
+        
+        ctx.strokeStyle = gradient;
         ctx.lineWidth = borderWidth;
-
         ctx.beginPath();
-        ctx.moveTo(borderRadius, borderWidth / 2);
-        ctx.lineTo(width - borderRadius, borderWidth / 2);
-        ctx.arcTo(width - borderWidth / 2, borderWidth / 2, width - borderWidth / 2, borderRadius, borderRadius);
-        ctx.lineTo(width - borderWidth / 2, height - borderRadius);
-        ctx.arcTo(width - borderWidth / 2, height - borderWidth / 2, width - borderRadius, height - borderWidth / 2, borderRadius);
-        ctx.lineTo(borderRadius, height - borderWidth / 2);
-        ctx.arcTo(borderWidth / 2, height - borderWidth / 2, borderWidth / 2, height - borderRadius, borderRadius);
-        ctx.lineTo(borderWidth / 2, borderRadius);
-        ctx.arcTo(borderWidth / 2, borderWidth / 2, borderRadius, borderWidth / 2, borderRadius);
-        ctx.closePath();
+        ctx.roundRect(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth, borderRadius);
         ctx.stroke();
 
 
@@ -97,7 +91,7 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
         const yScale = chartHeight / (maxY - minY);
 
         // Draw grid lines and Y axis ticks
-        ctx.strokeStyle = '#ccc'; // Light grid lines
+        ctx.strokeStyle = 'rgba(198, 231, 255, 0.3)'; // Subtle grid lines
         ctx.lineWidth = 1;
         for (let i = 0; i <= 5; i++) {
             const y = margin.top + chartHeight - (chartHeight / 5) * i;
@@ -108,23 +102,25 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
             ctx.lineTo(margin.left + chartWidth, y);
             ctx.stroke();
 
-            // Add Y axis labels
-            ctx.fillStyle = '#000'; // Black text for white background
-            ctx.font = '14px Arial';
+            // Add Y axis labels with better styling
+            ctx.fillStyle = '#1a1a2e';
+            ctx.font = 'bold 13px Arial';
             ctx.textAlign = 'right';
-            ctx.fillText(yValue.toFixed(0), margin.left - 10, y + 4);
+            ctx.fillText(`$${yValue.toFixed(0)}`, margin.left - 10, y + 4);
         }
 
         // Highlight the zero line
         const zeroY = margin.top + chartHeight + (minY * yScale);
-        ctx.strokeStyle = '#000'; // Black zero line
+        ctx.strokeStyle = '#4e4e68';
         ctx.lineWidth = 2;
+        ctx.setLineDash([5, 5]);
         ctx.beginPath();
         ctx.moveTo(margin.left, zeroY);
         ctx.lineTo(margin.left + chartWidth, zeroY);
         ctx.stroke();
+        ctx.setLineDash([]);
 
-        // Draw combined bar chart
+        // Draw combined bar chart with gradients
         labels.forEach((label, index) => {
             const x = margin.left + index * xStep + xStep / 4;
             const barWidth = xStep / 2;
@@ -132,61 +128,115 @@ const CashFlowChart: React.FC<CashFlowChartProps> = ({ data }) => {
             const incomeHeight = incomes[index] * yScale;
             const expenseHeight = expenses[index] * yScale;
 
-            // Draw income bar (green, starting from 0 upwards)
-            ctx.fillStyle = 'rgba(75, 192, 192, 0.8)';
+            // Draw income bar with gradient
+            const incomeGradient = ctx.createLinearGradient(x, zeroY - incomeHeight, x, zeroY);
+            incomeGradient.addColorStop(0, 'rgba(34, 197, 94, 0.9)');
+            incomeGradient.addColorStop(1, 'rgba(134, 239, 172, 0.7)');
+            ctx.fillStyle = incomeGradient;
             ctx.fillRect(x, zeroY - incomeHeight, barWidth, incomeHeight);
+            
+            // Add border to income bar
+            ctx.strokeStyle = 'rgba(34, 197, 94, 1)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, zeroY - incomeHeight, barWidth, incomeHeight);
 
-            // Draw expense bar (red, starting from 0 downwards)
-            ctx.fillStyle = 'rgba(255, 99, 132, 0.8)';
+            // Draw expense bar with gradient
+            const expenseGradient = ctx.createLinearGradient(x, zeroY, x, zeroY + expenseHeight);
+            expenseGradient.addColorStop(0, 'rgba(239, 68, 68, 0.9)');
+            expenseGradient.addColorStop(1, 'rgba(252, 165, 165, 0.7)');
+            ctx.fillStyle = expenseGradient;
             ctx.fillRect(x, zeroY, barWidth, expenseHeight);
+            
+            // Add border to expense bar
+            ctx.strokeStyle = 'rgba(239, 68, 68, 1)';
+            ctx.lineWidth = 1;
+            ctx.strokeRect(x, zeroY, barWidth, expenseHeight);
 
-            // Add income and expense labels
-            ctx.fillStyle = '#000'; // Black text for white background
-            ctx.font = '14px Arial';
+            // Add income and expense labels with better styling
+            ctx.fillStyle = '#1a1a2e';
+            ctx.font = 'bold 12px Arial';
             ctx.textAlign = 'center';
             if (incomes[index] > 0) {
-                ctx.fillText(
-                    `\$${(incomes[index]).toFixed(0)} USD`,
-                    x + barWidth / 2,
-                    zeroY - incomeHeight - 5
+                // Background for label
+                const text = `$${(incomes[index]).toFixed(0)}`;
+                const textWidth = ctx.measureText(text).width;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillRect(
+                    x + barWidth / 2 - textWidth / 2 - 4,
+                    zeroY - incomeHeight - 20,
+                    textWidth + 8,
+                    16
                 );
+                ctx.fillStyle = '#22c55e';
+                ctx.fillText(text, x + barWidth / 2, zeroY - incomeHeight - 8);
             }
             if (expenses[index] > 0) {
-                ctx.fillText(
-                    `\$${(expenses[index]).toFixed(0)} USD`,
-                    x + barWidth / 2,
-                    zeroY + expenseHeight + 15
+                const text = `$${(expenses[index]).toFixed(0)}`;
+                const textWidth = ctx.measureText(text).width;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillRect(
+                    x + barWidth / 2 - textWidth / 2 - 4,
+                    zeroY + expenseHeight + 8,
+                    textWidth + 8,
+                    16
                 );
+                ctx.fillStyle = '#ef4444';
+                ctx.fillText(text, x + barWidth / 2, zeroY + expenseHeight + 20);
             }
         });
 
-        // Add X axis labels
-        ctx.fillStyle = '#000'; // Black text for white background
-        ctx.font = '14px Arial';
+        // Add X axis labels with better styling
+        ctx.fillStyle = '#1a1a2e';
+        ctx.font = 'bold 12px Arial';
         ctx.textAlign = 'center';
         labels.forEach((label, index) => {
             const x = margin.left + index * xStep + xStep / 2;
-            const y = margin.top + chartHeight + 60;
+            const y = margin.top + chartHeight + 30;
             ctx.fillText(label, x, y);
         });
 
-        // Draw legend in the top-right corner
-        const legendX = width - 150;
-        const legendY = margin.top;
-        ctx.fillStyle = '#000'; // Black text
-        ctx.font = '16px Arial';
+        // Draw enhanced legend
+        const legendX = width - 180;
+        const legendY = margin.top + 10;
+        
+        // Legend background
+        ctx.fillStyle = 'rgba(255, 255, 255, 0.95)';
+        ctx.strokeStyle = 'rgba(198, 231, 255, 0.6)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.roundRect(legendX - 10, legendY - 10, 170, 90, 8);
+        ctx.fill();
+        ctx.stroke();
+        
+        ctx.font = 'bold 14px Arial';
+        ctx.fillStyle = '#1a1a2e';
 
         // Income (green)
-        ctx.fillStyle = 'rgba(75, 192, 192, 0.8)';
-        ctx.fillRect(legendX, legendY, 20, 20);
-        ctx.fillStyle = '#000';
-        ctx.fillText('Income', legendX + 30, legendY + 15);
+        const incomeGradient = ctx.createLinearGradient(legendX, legendY + 5, legendX, legendY + 25);
+        incomeGradient.addColorStop(0, 'rgba(34, 197, 94, 0.9)');
+        incomeGradient.addColorStop(1, 'rgba(134, 239, 172, 0.7)');
+        ctx.fillStyle = incomeGradient;
+        ctx.fillRect(legendX, legendY + 5, 25, 20);
+        ctx.strokeStyle = 'rgba(34, 197, 94, 1)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(legendX, legendY + 5, 25, 20);
+        
+        ctx.fillStyle = '#1a1a2e';
+        ctx.textAlign = 'left';
+        ctx.fillText('💰 Income', legendX + 35, legendY + 20);
 
         // Expense (red)
-        ctx.fillStyle = 'rgba(255, 99, 132, 0.8)';
-        ctx.fillRect(legendX, legendY + 40, 20, 20);
-        ctx.fillStyle = '#000';
-        ctx.fillText('Expense', legendX + 30, legendY + 55);
+        const expenseGradient = ctx.createLinearGradient(legendX, legendY + 45, legendX, legendY + 65);
+        expenseGradient.addColorStop(0, 'rgba(239, 68, 68, 0.9)');
+        expenseGradient.addColorStop(1, 'rgba(252, 165, 165, 0.7)');
+        ctx.fillStyle = expenseGradient;
+        ctx.fillRect(legendX, legendY + 45, 25, 20);
+        ctx.strokeStyle = 'rgba(239, 68, 68, 1)';
+        ctx.lineWidth = 1;
+        ctx.strokeRect(legendX, legendY + 45, 25, 20);
+        
+        ctx.fillStyle = '#1a1a2e';
+        ctx.fillText('💳 Expense', legendX + 35, legendY + 60);
     }, [data]);
 
     return <canvas ref={canvasRef}></canvas>;

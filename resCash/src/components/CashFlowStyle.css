@@ -1,72 +1,227 @@
 /* CashFlowStyle.css */
 
 .cashflow-container {
-    padding: 20px;
-    background-color: #E1F5FE; /* Dark background for the container */
-    border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5); /* Enhanced shadow effect */
-    margin: 20px;
-    max-width: 800px;
-    margin-left: auto;
-    margin-right: auto;
-    color: #ffffff; /* Default text color set to white */
+    padding: 30px;
+    background: linear-gradient(135deg, #e1f5fe 0%, #d4f6ff 100%);
+    border-radius: 16px;
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.12),
+        0 4px 8px rgba(198, 231, 255, 0.2);
+    margin: 20px auto;
+    max-width: 1400px;
+    color: #1a1a2e;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.cashflow-container:hover {
+    transform: translateY(-3px);
+    box-shadow: 
+        0 12px 32px rgba(0, 0, 0, 0.15),
+        0 6px 12px rgba(198, 231, 255, 0.3);
 }
 
 .cashflow-title {
-    font-size: 24px;
-    margin-bottom: 20px;
-    color: #4DA6FF; /* Title text color set to white */
-    text-align: center; /* Center-align the title */
+    font-size: 32px;
+    font-weight: 700;
+    margin-bottom: 30px;
+    color: #1a1a2e;
+    text-align: center;
+    letter-spacing: 1px;
+    background: linear-gradient(135deg, #c6e7ff 0%, #b5d6ff 100%);
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 
+        0 4px 12px rgba(198, 231, 255, 0.3),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+    position: relative;
+    overflow: hidden;
+}
+
+.cashflow-title::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    transition: left 0.5s ease;
+}
+
+.cashflow-title:hover::before {
+    left: 100%;
 }
 
 .table-container {
-    overflow-x: auto; /* Allow horizontal scrolling if needed */
+    overflow-x: auto;
+    margin-top: 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
 }
 
 .cashflow-table {
     width: 100%;
-    border-collapse: collapse; /* Remove space between table cells */
+    border-collapse: collapse;
     margin-bottom: 20px;
-    background-color: #C6E7FF; /* Background color for the table */
+    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    border-radius: 12px;
+    overflow: hidden;
 }
 
 .cashflow-table th,
 .cashflow-table td {
-    border: 1px solid #444; /* Dark border for cells */
-    padding: 12px;
-    text-align: left; /* Left-align the text in cells */
-    color: #ffffff; /* Text color for table cells set to white */
+    border: 1px solid rgba(198, 231, 255, 0.4);
+    padding: 16px;
+    text-align: left;
+    color: #1a1a2e;
+    transition: background-color 0.3s ease;
 }
 
 .cashflow-table th {
-    background-color: #C6E7FF; /* Background color for table headers */
-    font-weight: bold; /* Bold font for table headers */
-    color: #ffffff; /* Text color for table headers set to white */
+    background: linear-gradient(135deg, #c6e7ff 0%, #b5d6ff 100%);
+    font-weight: 600;
+    color: #1a1a2e;
+    text-transform: uppercase;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .cashflow-table tr:nth-child(even) {
-    background-color: #C6E7FF; /* Background color for even rows */
+    background-color: rgba(225, 245, 254, 0.5);
 }
 
 .cashflow-table tr:hover {
-    background-color: #C6E7FF; /* Highlight background color when hovering over rows */
+    background-color: rgba(198, 231, 255, 0.3);
+    transform: scale(1.01);
 }
 
 .error-message {
-    color: #ff4d4f; /* Red color for error messages */
-    font-weight: bold; /* Bold font for error messages */
-    text-align: center; /* Center-align the error message */
+    color: #dc3545;
+    font-weight: 600;
+    text-align: center;
+    padding: 20px;
+    background-color: rgba(220, 53, 69, 0.1);
+    border-radius: 8px;
+    border: 1px solid rgba(220, 53, 69, 0.2);
 }
 
-/* Axis labels and tick marks */
-.axis-label,
-.tick-label {
-    fill: #ffffff; /* Ensure axis labels and tick marks are white */
-    color: #ffffff; /* For text-based axis labels */
+/* Chart Container Styles */
+.chart-wrapper {
+    background: linear-gradient(135deg, #ffffff 0%, #f8fcff 100%);
+    border-radius: 12px;
+    padding: 25px;
+    margin-top: 20px;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.08),
+        inset 0 1px 0 rgba(255, 255, 255, 0.8);
 }
 
-.chart-legend {
-    color: #ffffff; /* Ensure chart legend text is white */
+.chart-wrapper canvas {
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Stats Cards */
+.stats-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-bottom: 30px;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, #ffffff 0%, #f0f9ff 100%);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s ease;
+    border: 1px solid rgba(198, 231, 255, 0.4);
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(198, 231, 255, 0.4);
+}
+
+.stat-label {
+    font-size: 13px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-weight: 500;
+    margin-bottom: 8px;
+}
+
+.stat-value {
+    font-size: 28px;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin-bottom: 5px;
+}
+
+.stat-change {
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.stat-change.positive {
+    color: #28a745;
+}
+
+.stat-change.negative {
+    color: #dc3545;
+}
+
+/* Loading State */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 60px 20px;
+    color: #6c757d;
+}
+
+.loading-spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid rgba(198, 231, 255, 0.3);
+    border-top-color: #c6e7ff;
+    border-radius: 50%;
+    animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .cashflow-container {
+        padding: 20px;
+        margin: 10px;
+    }
+    
+    .cashflow-title {
+        font-size: 24px;
+    }
+    
+    .stats-container {
+        grid-template-columns: 1fr;
+    }
 }
 
 

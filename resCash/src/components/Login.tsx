@@ -15,9 +15,15 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const [showModal, setShowModal] = useState<boolean>(false);
   const [modalTitle, setModalTitle] = useState<string>("");
   const [modalMessage, setModalMessage] = useState<string>("");
+  const devLoginEnabled =
+    process.env.REACT_APP_ENABLE_DEV_LOGIN === "true";
+  const [isDevLoginLoading, setIsDevLoginLoading] = useState<boolean>(
+    devLoginEnabled
+  );
+  const [devLoginError, setDevLoginError] = useState<string | null>(null);
 
   // Initialize SDK if not already initialized
-  if (!sdkRef.current) {
+  if (!sdkRef.current && !devLoginEnabled) {
     sdkRef.current = new ResVaultSDK("*");
     console.log("SDK initialized:", sdkRef.current);
   }
@@ -77,6 +83,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
   };
 
   useEffect(() => {
+    if (devLoginEnabled) {
+      return;
+    }
+
     const sdk = sdkRef.current;
     if (!sdk) return;
 
@@ -142,6 +152,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   // Test if message listener is working by sending a test message to the SDK
   useEffect(() => {
+    if (devLoginEnabled) {
+      return;
+    }
+
     console.log("DEBUG: Testing SDK message listener");
     const testMessage = () => {
       console.log("DEBUG: Sending test message to SDK");
@@ -158,6 +172,11 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
   // Handle authentication button click: send login message to SDK
   const handleAuthentication = () => {
+    if (devLoginEnabled) {
+      console.log("DEV login enabled, skipping ResVault authentication.");
+      return;
+    }
+
     console.log("DEBUG: Login button clicked, sending login message to SDK");
     if (sdkRef.current) {
       console.log("DEBUG: SDK reference exists, sending message:", {
@@ -179,6 +198,56 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     localStorage.setItem("currentPage", "home");
   };
 
+  useEffect(() => {
+    if (!devLoginEnabled) {
+      return;
+    }
+
+    let cancelled = false;
+    const performDevLogin = async () => {
+      setIsDevLoginLoading(true);
+      setDevLoginError(null);
+
+      try {
+        const response = await fetch(
+          "http://127.0.0.1:8099/api/transactions/devLogin",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+
+        if (!response.ok) {
+          throw new Error(`Dev login failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!cancelled && data.token) {
+          sessionStorage.setItem("token", data.token);
+          sessionStorage.setItem("publicKey", data.publicKey);
+          console.log("DEV login successful, token stored.");
+          onLogin(data.token);
+          setIsDevLoginLoading(false);
+        }
+      } catch (error) {
+        console.error("DEV login error:", error);
+        if (!cancelled) {
+          setDevLoginError("Unable to reach dev login endpoint. Click retry once backend is ready.");
+          setIsDevLoginLoading(false);
+        }
+      }
+    };
+
+    performDevLogin();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [devLoginEnabled, onLogin]);
+
   return (
     <>
       <div className="page-container">
@@ -188,17 +257,68 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
           <div ref={animationContainer} className="animation-container"></div>
 
           <div className="form-group text-center mb-4">
-            <label className="signin-label">Sign In Via</label>
-            <button
-              type="button"
-              className="btn btn-secondary oauth-button"
-              onClick={handleAuthentication}
-            >
-              <div className="logoBox">
-                <img src={resvaultLogo} alt="ResVault" className="oauth-logo" />
+            {devLoginEnabled ? (
+              <div className="dev-login-container">
+                <label className="signin-label">Developer Login</label>
+                <button
+                  type="button"
+                  className="btn btn-secondary oauth-button"
+                  onClick={() => {
+                    setDevLoginError(null);
+                    setIsDevLoginLoading(true);
+                    fetch("http://127.0.0.1:8099/api/transactions/devLogin", {
+                      method: "POST",
+                      headers: { "Content-Type": "application/json" },
+                    })
+                      .then((res) => {
+                        if (!res.ok) {
+                          throw new Error(
+                            `Dev login failed with status ${res.status}`
+                          );
+                        }
+                        return res.json();
+                      })
+                      .then((data) => {
+                        sessionStorage.setItem("token", data.token);
+                        sessionStorage.setItem("publicKey", data.publicKey);
+                        onLogin(data.token);
+                        setIsDevLoginLoading(false);
+                      })
+                      .catch((error) => {
+                        console.error("DEV login retry error:", error);
+                        setDevLoginError(
+                          "Retry failed. Ensure backend service is running."
+                        );
+                        setIsDevLoginLoading(false);
+                      });
+                  }}
+                  disabled={isDevLoginLoading}
+                >
+                  {isDevLoginLoading ? "Logging in..." : "Retry Dev Login"}
+                </button>
+                {devLoginError && (
+                  <p className="error-text mt-3">{devLoginError}</p>
+                )}
               </div>
-              <span className="oauth-text">ResVault</span>
-            </button>
+            ) : (
+              <>
+                <label className="signin-label">Sign In Via</label>
+                <button
+                  type="button"
+                  className="btn btn-secondary oauth-button"
+                  onClick={handleAuthentication}
+                >
+                  <div className="logoBox">
+                    <img
+                      src={resvaultLogo}
+                      alt="ResVault"
+                      className="oauth-logo"
+                    />
+                  </div>
+                  <span className="oauth-text">ResVault</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>

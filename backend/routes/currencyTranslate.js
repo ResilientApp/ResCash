@@ -1,6 +1,6 @@
 import express from "express";
 import Transaction from "../models/Transaction.js";
-import fetch from "node-fetch"; // Import node-fetch for external API calls
+import fetch from "node-fetch";
 
 const router = express.Router();
 

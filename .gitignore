@@ -123,12 +123,22 @@ celerybeat.pid
 
 # Environments
 .env
+.env.local
 .venv
 env/
 venv/
 ENV/
 env.bak/
 venv.bak/
+
+# Backend environment files (except examples)
+backend/.env
+backend/.env.local
+backend/.env.production
+
+# Frontend environment files (except examples)
+resCash/.env.local
+resCash/.env.production
 
 # Spyder project settings
 .spyderproject
@@ -200,3 +210,29 @@ packages/react-devtools-fusebox/dist
 packages/react-devtools-inline/dist
 packages/react-devtools-shell/dist
 packages/react-devtools-timeline/dist
+
+# MongoDB data
+local-mongo/data/
+*.wt
+*.log
+mongod.lock
+
+# PM2 logs and configs
+.pm2/
+pm2.log
+
+# Build artifacts
+resCash/build/
+resCash/dist/
+backend/dist/
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# Logs
+*.log
+logs/
+*.log.*
+server.log
+frontend.log

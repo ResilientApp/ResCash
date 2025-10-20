@@ -9,10 +9,15 @@ const mongoConfig = {
     collectionName: 'res_cache',
 };
 
+// Extract host and port from CROW_SERVER_URI
+const crowServerUri = process.env.CROW_SERVER_URI || 'http://localhost:18000/v1/transactions';
+const crowUrl = new URL(crowServerUri);
+const resilientBaseUrl = `resilientdb://${crowUrl.hostname}:${crowUrl.port}`;
+
 const resilientDBConfig = {
-    baseUrl: 'resilientdb://35.193.4.170:18000',
-    httpSecure: false,
-    wsSecure: false,
+    baseUrl: resilientBaseUrl,
+    httpSecure: crowUrl.protocol === 'https:',
+    wsSecure: crowUrl.protocol === 'https:',
   };
   
   const sync = new WebSocketMongoSync(mongoConfig, resilientDBConfig);

@@ -9,6 +9,8 @@ dotenv.config();
 
 const router = express.Router();
 const JWT_SECRET = 'h@G7#29s*&ZfJx3M!1qN$X2L@jP9kQ%y5T';
+const allowDevLogin = process.env.ENABLE_DEV_LOGIN === "true";
+const defaultDevPublicKey = process.env.DEV_PUBLIC_KEY;
 
 // Add login route
 router.post("/login", async (req, res) => {
@@ -36,6 +38,32 @@ router.post("/login", async (req, res) => {
   } catch (err) {
     console.error("DEBUG: Error generating JWT:", err);
     res.status(500).json({ message: "Error generating token", error: err.message });
+  }
+});
+
+router.post("/devLogin", (req, res) => {
+  console.log("DEBUG: Received POST /devLogin request");
+  if (!allowDevLogin) {
+    return res.status(403).json({ message: "Dev login is disabled." });
+  }
+
+  const requestedKey = req.body?.publicKey || defaultDevPublicKey;
+  if (!requestedKey) {
+    return res.status(400).json({ message: "Dev public key is not configured." });
+  }
+
+  try {
+    const token = jwt.sign({ publicKey: requestedKey }, JWT_SECRET, { expiresIn: "8h" });
+
+    if (req.session) {
+      req.session.publicKey = requestedKey;
+    }
+
+    console.log("DEBUG: Issued dev token for publicKey:", requestedKey);
+    res.json({ token, publicKey: requestedKey, devLogin: true });
+  } catch (error) {
+    console.error("Error generating dev login token:", error);
+    res.status(500).json({ message: "Unable to generate dev token." });
   }
 });
 

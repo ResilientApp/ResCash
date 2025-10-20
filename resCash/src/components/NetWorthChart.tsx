@@ -36,26 +36,20 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
 
         // Clear previous content and set white background
         ctx.clearRect(0, 0, width, height);
-        ctx.fillStyle = '#D4F6FF'; // Set background to white
+        ctx.fillStyle = '#ffffff';
         ctx.fillRect(0, 0, width, height);
-        //draw a boarder
-        const borderRadius = 20;
-        const borderWidth = 3;
-
-        ctx.strokeStyle = '#5DB9FF'; 
+        
+        // Draw rounded border with gradient
+        const borderRadius = 15;
+        const borderWidth = 2;
+        const gradient = ctx.createLinearGradient(0, 0, width, height);
+        gradient.addColorStop(0, '#c6e7ff');
+        gradient.addColorStop(1, '#80bdff');
+        
+        ctx.strokeStyle = gradient;
         ctx.lineWidth = borderWidth;
-
         ctx.beginPath();
-        ctx.moveTo(borderRadius, borderWidth / 2);
-        ctx.lineTo(width - borderRadius, borderWidth / 2);
-        ctx.arcTo(width - borderWidth / 2, borderWidth / 2, width - borderWidth / 2, borderRadius, borderRadius);
-        ctx.lineTo(width - borderWidth / 2, height - borderRadius);
-        ctx.arcTo(width - borderWidth / 2, height - borderWidth / 2, width - borderRadius, height - borderWidth / 2, borderRadius);
-        ctx.lineTo(borderRadius, height - borderWidth / 2);
-        ctx.arcTo(borderWidth / 2, height - borderWidth / 2, borderWidth / 2, height - borderRadius, borderRadius);
-        ctx.lineTo(borderWidth / 2, borderRadius);
-        ctx.arcTo(borderWidth / 2, borderWidth / 2, borderRadius, borderWidth / 2, borderRadius);
-        ctx.closePath();
+        ctx.roundRect(borderWidth / 2, borderWidth / 2, width - borderWidth, height - borderWidth, borderRadius);
         ctx.stroke();
 
 
@@ -121,7 +115,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         const yScale = chartHeight / (maxY - minY);
 
         // Draw grid lines and Y axis ticks
-        ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)'; // Light grid lines
+        ctx.strokeStyle = 'rgba(198, 231, 255, 0.3)';
         ctx.lineWidth = 1;
         for (let i = 0; i <= 5; i++) {
             const y = margin.top + chartHeight - (chartHeight / 5) * i;
@@ -132,7 +126,7 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         }
 
         // Draw X and Y axes
-        ctx.strokeStyle = '#000000'; // White axis
+        ctx.strokeStyle = '#4e4e68';
         ctx.lineWidth = 2;
         ctx.beginPath();
         ctx.moveTo(margin.left, margin.top + chartHeight);
@@ -144,11 +138,39 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         ctx.lineTo(margin.left, margin.top + chartHeight);
         ctx.stroke();
 
-
-        // Draw line chart - Net Cash Flow
+        // Fill area under curve with gradient
         ctx.beginPath();
-        ctx.strokeStyle = 'rgba(0, 102, 204, 1)'; // Line color
-        ctx.lineWidth = 2;
+        const areaGradient = ctx.createLinearGradient(0, margin.top, 0, margin.top + chartHeight);
+        areaGradient.addColorStop(0, 'rgba(59, 130, 246, 0.3)');
+        areaGradient.addColorStop(1, 'rgba(59, 130, 246, 0.05)');
+        
+        netWorth.forEach((value, index) => {
+            const x = margin.left + index * xStep + xStep / 2;
+            const y = margin.top + chartHeight - (value - minY) * yScale;
+            if (index === 0) {
+                ctx.moveTo(x, y);
+            } else {
+                ctx.lineTo(x, y);
+            }
+        });
+        
+        // Complete the area path
+        const lastX = margin.left + (netWorth.length - 1) * xStep + xStep / 2;
+        ctx.lineTo(lastX, margin.top + chartHeight);
+        ctx.lineTo(margin.left + xStep / 2, margin.top + chartHeight);
+        ctx.closePath();
+        ctx.fillStyle = areaGradient;
+        ctx.fill();
+
+        // Draw line chart - Net Worth
+        ctx.beginPath();
+        const lineGradient = ctx.createLinearGradient(0, 0, width, 0);
+        lineGradient.addColorStop(0, 'rgba(59, 130, 246, 1)');
+        lineGradient.addColorStop(1, 'rgba(96, 165, 250, 1)');
+        ctx.strokeStyle = lineGradient;
+        ctx.lineWidth = 3;
+        ctx.shadowColor = 'rgba(59, 130, 246, 0.3)';
+        ctx.shadowBlur = 8;
 
         netWorth.forEach((value, index) => {
             const x = margin.left + index * xStep + xStep / 2;
@@ -161,38 +183,74 @@ const NetWorthChart: React.FC<NetWorthChartProps> = ({ data }) => {
         });
 
         ctx.stroke();
+        ctx.shadowBlur = 0;
 
-        // Draw markers for each data point on the line chart
+        // Draw markers for each data point
         netWorth.forEach((value, index) => {
             const x = margin.left + index * xStep + xStep / 2;
             const y = margin.top + chartHeight - (value - minY) * yScale;
-            ctx.fillStyle = 'rgba(0, 102, 204, 1)';
+            
+            // Outer circle
+            ctx.fillStyle = '#ffffff';
             ctx.beginPath();
-            ctx.arc(x, y, 3, 0, 2 * Math.PI);
+            ctx.arc(x, y, 5, 0, 2 * Math.PI);
             ctx.fill();
+            
+            // Inner circle with gradient
+            const dotGradient = ctx.createRadialGradient(x, y, 0, x, y, 4);
+            dotGradient.addColorStop(0, 'rgba(59, 130, 246, 1)');
+            dotGradient.addColorStop(1, 'rgba(37, 99, 235, 1)');
+            ctx.fillStyle = dotGradient;
+            ctx.beginPath();
+            ctx.arc(x, y, 4, 0, 2 * Math.PI);
+            ctx.fill();
+            
+            // Add value label on hover (show every 3rd point to avoid clutter)
+            if (index % 3 === 0) {
+                ctx.fillStyle = '#1a1a2e';
+                ctx.font = 'bold 11px Arial';
+                ctx.textAlign = 'center';
+                const labelY = y > chartHeight / 2 ? y - 15 : y + 20;
+                
+                // Background for label
+                const text = `$${value.toFixed(0)}`;
+                const textWidth = ctx.measureText(text).width;
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.9)';
+                ctx.fillRect(x - textWidth / 2 - 3, labelY - 10, textWidth + 6, 14);
+                
+                ctx.fillStyle = '#3b82f6';
+                ctx.fillText(text, x, labelY);
+            }
         });
 
-        // Add X axis labels, rotate to avoid overlap
-        ctx.fillStyle = '#000000'; // White text
-        ctx.font = '12px Arial';
+        // Add X axis labels with rotation
+        ctx.fillStyle = '#1a1a2e';
+        ctx.font = 'bold 11px Arial';
         ctx.textAlign = 'right';
         labels.forEach((label, index) => {
             const x = margin.left + index * xStep + xStep / 2;
             const y = margin.top + chartHeight + 40;
             ctx.save();
             ctx.translate(x, y);
-            ctx.rotate(-Math.PI / 4); // Rotate 45 degrees
+            ctx.rotate(-Math.PI / 4);
             ctx.fillText(label, 0, 0);
             ctx.restore();
         });
 
-        // Add Y axis labels (rounded to nearest integer)
+        // Add Y axis labels
         ctx.textAlign = 'right';
+        ctx.font = 'bold 12px Arial';
         for (let i = 0; i <= 5; i++) {
             const yValue = Math.round(minY + ((maxY - minY) / 5) * i);
             const y = margin.top + chartHeight - (chartHeight / 5) * i;
-            ctx.fillText(yValue.toString(), margin.left - 10, y + 4);
+            ctx.fillText(`$${yValue.toString()}`, margin.left - 10, y + 4);
         }
+        
+        // Add chart title
+        ctx.fillStyle = '#1a1a2e';
+        ctx.font = 'bold 18px Arial';
+        ctx.textAlign = 'center';
+        ctx.fillText('Net Worth Over Time', width / 2, 25);
 
     }, [data]);
 
