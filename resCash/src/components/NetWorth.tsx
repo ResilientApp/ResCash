@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import NetWorthChart from './NetWorthChart'; 
 import './CashFlowStyle.css';
+import { buildApiUrl } from '../utils/api';
 
 
 interface Transaction {
@@ -38,7 +39,7 @@ const NetWorth: React.FC = () => {
                     throw new Error('No authentication token found');
                 }
 
-                const response = await fetch('http://localhost:8099/api/read/userTransactions', {
+                const response = await fetch(buildApiUrl('/api/read/userTransactions'), {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -197,4 +198,3 @@ const NetWorth: React.FC = () => {
 };
 
 export default NetWorth;
-

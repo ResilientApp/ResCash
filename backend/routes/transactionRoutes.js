@@ -8,7 +8,8 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 
 const router = express.Router();
-const JWT_SECRET = 'h@G7#29s*&ZfJx3M!1qN$X2L@jP9kQ%y5T';
+const JWT_SECRET =
+  process.env.JWT_SECRET || "h@G7#29s*&ZfJx3M!1qN$X2L@jP9kQ%y5T";
 const allowDevLogin = process.env.ENABLE_DEV_LOGIN === "true";
 const defaultDevPublicKey = process.env.DEV_PUBLIC_KEY;
 

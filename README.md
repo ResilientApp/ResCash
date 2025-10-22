@@ -17,90 +17,68 @@ ResCash is built on a modern and robust tech stack, ensuring scalability, reliab
 
 ## Prerequisites
 
-1. **Install ResVault Chrome Extension**
+- **Node.js 20.18.0** – run `nvm use` (see `.nvmrc`) or install manually.
+- **Docker & Docker Compose** – required for containerised runs and deployment parity.
+- (Optional) **ResVault Chrome Extension** – only required when ResVault-based login is enabled.
 
-   - Follow the instructions [here](https://blog.resilientdb.com/2023/09/21/ResVault.html).
-   - Ensure that the ResVault extension is connected to:
-     ```
-     [76.158.247.201:8070](http://35.193.4.170:8000/)
-     ```
-     _(You may substitute this URI with your own GraphQL server URI if needed.)_
-     _(If you would like to set up your own GraphQL server, make sure it is running on all address (0.0.0.0))_
+## Environment Configuration
 
-2. **Install Node.js and npm**
-   - Refer to the [official guide](https://docs.npmjs.com/downloading-and-installing-node-js-and-npm).
-   - Confirm installation by running:
-     ```sh
-     npm -v
-     ```
+Copy the provided example files and fill in environment-specific values:
 
-## Setting Up ResCash
+```sh
+cp backend/.env.example backend/.env
+cp resCash/.env.example resCash/.env.local
+```
 
-1. **Clone the ResCash Repository**
+Key variables:
 
-   ```sh
-   git clone https://github.com/quiet98k/resCash
-   ```
+- `MONGODB_URI`, `MONGODB_DB_NAME` – database connection.
+- `GRAPHQL_URI`, `CROW_SERVER_URI` – ResilientDB endpoints (leave disabled when running purely offline).
+- `SESSION_SECRET`, `JWT_SECRET` – secrets that **must** be rotated for non-development environments.
+- `REACT_APP_API_BASE_URL` – points the frontend to the deployed backend.
+- `REACT_APP_ENABLE_DEV_LOGIN` – set to `true` to bypass ResVault when testing locally.
 
-2. **Navigate to the Root Directory**
+## Local Development (Node)
 
-   ```sh
-   cd resCash
-   ```
+```sh
+# Backend
+cd backend
+npm install
+npm start
 
-3. **Set Up the Frontend**
+# Frontend (in a second terminal)
+cd resCash
+npm install
+npm start
+```
 
-   - Navigate to the frontend directory (same name as the root directory):
-     ```sh
-     cd resCash
-     ```
-   - Install dependencies:
-     ```sh
-     npm install
-     ```
-   - Start the frontend server:
-     ```sh
-     npm start
-     ```
+The frontend is exposed at `http://localhost:3000` and calls the backend using the value from `REACT_APP_API_BASE_URL`.  
+The backend publishes a `/test` health route on `http://localhost:8099/test`.
 
-4. **Set Up the Backend**
+## Local Development (Docker Compose)
 
-   - Open a new terminal and return to the root directory:
-     ```sh
-     cd resCash
-     ```
-   - Navigate to the backend directory:
-     ```sh
-     cd backend
-     ```
-   - Create a `.env` file with the following configuration:
-     ```
-     MONGODB_URI=mongodb://76.158.247.201:27017/
-     MONGODB_DB_NAME=resilientDB
-     GRAPHQL_URI=http://76.158.247.201:8070/graphql
-     CROW_SERVER_URI=http://76.158.247.201:18000/v1/transactions
-     ```
-     - **MONGODB_URI**: MongoDB connection URI (customizable).
-     - **MONGODB_DB_NAME**: Database name.
-     - **GRAPHQL_URI**: GraphQL server URI (include the `/graphql` suffix).
-     - **CROW_SERVER_URI**: Crow server URI (must match the GraphQL URI).
-   - Install backend dependencies:
-     ```sh
-     npm install
-     ```
-   - Start the backend server:
-     ```sh
-     npm start
-     ```
+```sh
+docker compose up --build
+```
 
-5. **Access the Application**
-   Open your browser and navigate to:
-   ```
-   http://localhost:3000/
-   ```
+This starts:
 
-## Notes
+- `mongo` – MongoDB 6.0 with a persistent `mongo-data` volume.
+- `backend` – Node.js API container (built from `backend/Dockerfile`).
 
-- Ensure all URIs are consistent between `.env` files and the ResVault extension.
-- There are also some URL you need to change inside the application.
-- Make sure update the URL of all the services used in this app to run it
+Adjust `backend/.env` when running in Docker so that `MONGODB_URI=mongodb://mongo:27017`.
+
+## Deployment Checklist
+
+- [x] Backend dockerised (`backend/Dockerfile`) and third-party dependencies modelled in `docker-compose.yml`.
+- [x] `.env.example` files provided for frontend and backend.
+- [x] Backend/server values (port, host, secrets) sourced from environment variables.
+- [x] Frontend fetches all API endpoints via `REACT_APP_API_BASE_URL`.
+- [x] Health endpoint available at `/test`.
+
+For ExpoLab deployments:
+
+1. Build and push the Docker image produced by `backend/Dockerfile`.
+2. Configure secrets in the target environment using the keys described above.
+3. Deploy the frontend via Vercel or GitHub Pages, pointing `REACT_APP_API_BASE_URL` to the backend domain.
+4. Provision a Cloudflare subdomain and route it to the backend container through Nginx (see lab guide).

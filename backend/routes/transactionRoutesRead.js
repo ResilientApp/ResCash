@@ -1,12 +1,12 @@
 import express from "express";
 import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
-import { MongoClient } from "mongodb";
 
 dotenv.config();
 
 const router = express.Router();
-const JWT_SECRET = 'h@G7#29s*&ZfJx3M!1qN$X2L@jP9kQ%y5T';
+const JWT_SECRET =
+  process.env.JWT_SECRET || "h@G7#29s*&ZfJx3M!1qN$X2L@jP9kQ%y5T";
 
 if (!JWT_SECRET) {
   throw new Error("JWT_SECRET is not defined in environment variables");

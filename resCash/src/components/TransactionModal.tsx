@@ -3,6 +3,7 @@ import Modal from "react-bootstrap/Modal";
 import Button from "react-bootstrap/Button";
 import TransactionForm from "./TransactionForm";
 import ResVaultSDK from "resvault-sdk";
+import { buildApiUrl } from "../utils/api";
 
 interface Transaction {
   _id: string; // MongoDB ID
@@ -34,18 +35,9 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
   const [formData, setFormData] = useState<Transaction>(transaction);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const sdkRef = useRef<ResVaultSDK | null>(null);
-  const [modalTitle, setModalTitle] = useState<string>("");
-  const [modalMessage, setModalMessage] = useState<string>("");
-  const [showModal, setShowModal] = useState<boolean>(false);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   useEffect(() => {
-    if (
-      transaction &&
-      JSON.stringify(formData) !== JSON.stringify(transaction)
-    ) {
-      setFormData(transaction);
-    }
+    setFormData(transaction);
   }, [transaction]);
 
   const handleFormChange = (updatedFields: Partial<Transaction>) => {
@@ -57,15 +49,13 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     }
   };
 
-  const handleReload = () => {
-    window.location.reload();
-  };
-
   const handleSave = async () => {
     try {
       const token = sessionStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8099/api/updateTransactions/updateTransaction/${formData._id}`,
+        buildApiUrl(
+          `/api/updateTransactions/updateTransaction/${formData._id}`
+        ),
         {
           method: "PUT",
           headers: {
@@ -100,7 +90,9 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
     try {
       const token = sessionStorage.getItem("token");
       const response = await fetch(
-        `http://localhost:8099/api/transactions/deleteTransaction/${transaction._id}`,
+        buildApiUrl(
+          `/api/transactions/deleteTransaction/${transaction._id}`
+        ),
         {
           method: "DELETE",
           headers: {
@@ -133,9 +125,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
           });
         }
 
-        console.log("Transaction deleted successfully.");
-        setShowModal(true);
-
         onClose(); // Close the modal after saving
 
         localStorage.setItem("currentPage", "turnover");
@@ -146,9 +135,6 @@ const TransactionModal: React.FC<TransactionModalProps> = ({
       }
     } catch (err) {
       console.error("Error deleting transaction:", err);
-      setModalTitle("Error");
-      setModalMessage("Failed to delete transaction");
-      setShowModal(true);
     }
   };
 

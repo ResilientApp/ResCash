@@ -1,22 +1,15 @@
-import mongoose from 'mongoose';
-import dotenv from 'dotenv';
+import mongoose from "mongoose";
 
-dotenv.config();
+const connectMongo = async ({ uri, dbName }) => {
+  if (!uri) {
+    throw new Error("MongoDB connection uri is required");
+  }
 
-const uri = process.env.MONGODB_URI;
-const dbName = process.env.MONGODB_DB_NAME;
+  if (mongoose.connection.readyState === 0) {
+    await mongoose.connect(uri, dbName ? { dbName } : undefined);
+  }
 
-mongoose.connect(uri, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-  dbName: dbName,
-});
+  return mongoose.connection;
+};
 
-const db = mongoose.connection;
-
-db.on('error', console.error.bind(console, 'MongoDB connection error:'));
-db.once('open', () => {
-  console.log('Connected to MongoDB');
-});
-
-export default db;
+export default connectMongo;

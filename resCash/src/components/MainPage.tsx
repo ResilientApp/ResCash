@@ -15,11 +15,9 @@ interface MainLayoutProps {
 }
 
 const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
-  const [showModal, setShowModal] = useState(false);
   const [showTransactionModal, setShowTransactionModal] = useState(false);
   const [currentPage, setCurrentPage] = useState<string>("home");
   const [publicKey, setPublicKey] = useState<string>("");
-  const [isModalVisible, setIsModalVisible] = useState(true);
 
   useEffect(() => {
     const storedKey = sessionStorage.getItem("publicKey");
@@ -47,19 +45,6 @@ const MainLayout: React.FC<MainLayoutProps> = ({ token, onLogout }) => {
   // Handler for when SDK interaction completes
   const handleSdkComplete = () => {
     setShowTransactionModal(true);
-  };
-
-  const styles: { [key: string]: React.CSSProperties } = {
-    hiddenModal: {
-      opacity: 0,
-      visibility: "hidden",
-      transition: "opacity 0.3s, visibility 0.3s",
-    },
-    visibleModal: {
-      opacity: 1,
-      visibility: "visible",
-      transition: "opacity 0.3s, visibility 0.3s",
-    },
   };
 
   return (

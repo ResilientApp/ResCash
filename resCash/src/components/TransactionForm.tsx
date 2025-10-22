@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import ResVaultSDK from "resvault-sdk";
 import "../App.css";
 import NotificationModal from "./NotificationModal";
+import { buildApiUrl } from "../utils/api";
 
 interface TransactionFormProps {
   onLogout: () => void;
@@ -152,7 +153,7 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
 
           try {
             const response = await fetch(
-              "http://localhost:8099/api/transactions/saveTransaction",
+              buildApiUrl("/api/transactions/saveTransaction"),
               {
                 method: "POST",
                 headers: {
@@ -213,6 +214,8 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
     merchant,
     paymentMethod,
     timestamp,
+    onSdkOpen,
+    onSdkComplete,
   ]);
 
   useEffect(() => {
@@ -269,10 +272,6 @@ const TransactionForm: React.FC<TransactionFormProps> = ({
       setModalMessage("SDK is not initialized.");
       setShowModal(true);
     }
-  };
-
-  const handleLogout = () => {
-    onLogout();
   };
 
   const handleCloseModal = () => {

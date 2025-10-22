@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
 import Login from './components/Login';
-import TransactionForm from './components/TransactionForm';
 import MainLayout from './components/MainPage';
 import Loader from './components/Loader';
 
@@ -18,12 +17,6 @@ function App() {
       setIsAuthenticated(true);
     }
   }, []);
-
-  useEffect(() => {
-    console.log('isLoadingAfterLogin:', isLoadingAfterLogin);
-    console.log('isAuthenticated:', isAuthenticated);
-  }, [isLoadingAfterLogin, isAuthenticated]);
-  
 
   const handleLogin = (authToken: string) => {
     setIsLoadingAfterLogin(true);

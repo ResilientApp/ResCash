@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../App.css";
 import TransactionForm from "./TransactionForm"; // Form component
+import { buildApiUrl } from "../utils/api";
 
 interface MainPageProps {
     token: string | null;
@@ -39,7 +40,7 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
 
         const [summaryRes] =
           await Promise.all([
-            fetch("http://localhost:8099/api/reports/summary", {
+            fetch(buildApiUrl("/api/reports/summary"), {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
@@ -73,7 +74,7 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
             throw new Error('No authentication token found');
             }
         
-        const response = await fetch('http://localhost:8099/api/read/userTransactions', {
+        const response = await fetch(buildApiUrl("/api/read/userTransactions"), {
             method: 'GET',
             headers: {
             'Content-Type': 'application/json',
@@ -107,6 +108,14 @@ const MainPage: React.FC<MainPageProps> = ({ token, onLogout }) => {
         fetchUserTransactions();
     }, []);
 
+
+    if (loading) {
+        return <div className="content-layout">Loading...</div>;
+    }
+
+    if (error) {
+        return <div className="content-layout">Error: {error}</div>;
+    }
 
     return (
         <div className="content-layout">

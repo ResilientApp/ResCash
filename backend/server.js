@@ -3,30 +3,45 @@ import bodyParser from "body-parser";
 import session from 'express-session';
 import cors from "cors";
 import dotenv from "dotenv";
-import db from "./config/mongodb.js";
 import transactionRoutes from "./routes/transactionRoutes.js";
 import transactionRoutesReport from "./routes/transactionRoutesReport.js";
 import transactionRead from "./routes/transactionRoutesRead.js";
 import transactionRoutesUpdate from "./routes/transactionRoutesUpdate.js";
 import transactionRoutesDelete from "./routes/transactionRoutesDelete.js";
-import sync from './utils/sync.js';
-import mongoose from "mongoose"; // Or MongoDB's native driver
+import sync from "./utils/sync.js";
+import connectMongo from "./config/mongodb.js";
 
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 8099;
-const host = "127.0.0.1";
+const host = process.env.HOST || "0.0.0.0";
 
 const mongoURI = process.env.MONGODB_URI; // Replace with your MongoDB URI
-mongoose.connect(mongoURI, { useNewUrlParser: true, useUnifiedTopology: true });
+const mongoDbName = process.env.MONGODB_DB_NAME;
 
-const db_connect = mongoose.connection;
-db_connect.on("error", console.error.bind(console, "MongoDB connection error:"));
-db_connect.once("open", () => {
-  console.log("MongoDB connected");
-  app.locals.db = db_connect; // Assign db to app.locals for global access
-});
+if (!mongoURI) {
+  throw new Error("MONGODB_URI is not defined");
+}
+
+const initializeMongo = async () => {
+  try {
+    const connection = await connectMongo({ uri: mongoURI, dbName: mongoDbName });
+    connection.on(
+      "error",
+      console.error.bind(console, "MongoDB connection error:")
+    );
+    connection.once("open", () => {
+      console.log("MongoDB connected");
+    });
+    app.locals.db = connection;
+  } catch (error) {
+    console.error("Failed to initialize MongoDB connection:", error);
+    process.exit(1);
+  }
+};
+
+await initializeMongo();
 
 app.use(cors());
 
@@ -35,16 +50,20 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Setup session middleware
+const sessionSecret =
+  process.env.SESSION_SECRET ||
+  "sl023iknga7lskdjge2twedta1b2c3d4e5f6g7h8i9j0";
+
 app.use(
   session({
-    secret: "sl023iknga7lskdjge2twedta1b2c3d4e5f6g7h8i9j0",
+    secret: sessionSecret,
     resave: false,
     saveUninitialized: true,
     cookie: { secure: false }, // Set to true if using HTTPS
   })
 );
 // Initialize ResilientDB to MongoDB synchronization (skip when disabled)
-if (process.env.ENABLE_RESILIENT_SYNC !== "false") {
+if (process.env.ENABLE_RESILIENT_SYNC === "true") {
   (async () => {
     try {
       await sync.initialize();
@@ -67,10 +86,6 @@ app.get("/test", (req, res) => {
 app.post("/test", (req, res) => {
   console.log("POST /test route hit");
   res.json({ message: "Test route working" });
-});
-
-db.once("open", () => {
-  console.log("MongoDB connection established");
 });
 
 app.listen(port, host, () => {

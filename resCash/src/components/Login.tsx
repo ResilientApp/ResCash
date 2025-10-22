@@ -5,6 +5,7 @@ import resvaultLogo from "../assets/images/resilientdb.svg";
 import NotificationModal from "./NotificationModal";
 import lottie from "lottie-web";
 import animation from "../assets/images/animation.json";
+import { buildApiUrl } from "../utils/api";
 
 interface LoginProps {
   onLogin: (token: string) => void;
@@ -68,7 +69,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     try {
       console.log("DEBUG: Fetching public key for transactionID:", transactionID);
       const response = await fetch(
-        `http://localhost:8099/api/transactions/publicKey/${transactionID}`
+        buildApiUrl(`/api/transactions/publicKey/${transactionID}`)
       );
       if (!response.ok) {
         throw new Error("Failed to fetch public key");
@@ -107,16 +108,13 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                 sessionStorage.setItem("publicKey", publicKey);
                 console.log("DEBUG: Sending publicKey to backend for login:", publicKey);
                 // Send public key to backend login endpoint
-                const response = await fetch(
-                  "http://localhost:8099/api/transactions/login",
-                  {
-                    method: "POST",
-                    headers: {
-                      "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({ publicKey }),
-                  }
-                );
+                const response = await fetch(buildApiUrl("/api/transactions/login"), {
+                  method: "POST",
+                  headers: {
+                    "Content-Type": "application/json",
+                  },
+                  body: JSON.stringify({ publicKey }),
+                });
                 const data = await response.json();
                 console.log("DEBUG: Login response from backend:", data);
                 if (data.token) {
@@ -148,7 +146,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       console.log("DEBUG: Removing SDK message listener");
       sdk.removeMessageListener(messageHandler);
     };
-  }, [onLogin]);
+  }, [devLoginEnabled, onLogin]);
 
   // Test if message listener is working by sending a test message to the SDK
   useEffect(() => {
@@ -168,7 +166,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     // Send a test message after a short delay
     const timer = setTimeout(testMessage, 2000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [devLoginEnabled]);
 
   // Handle authentication button click: send login message to SDK
   const handleAuthentication = () => {
@@ -209,15 +207,12 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
       setDevLoginError(null);
 
       try {
-        const response = await fetch(
-          "http://127.0.0.1:8099/api/transactions/devLogin",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
+        const response = await fetch(buildApiUrl("/api/transactions/devLogin"), {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
 
         if (!response.ok) {
           throw new Error(`Dev login failed with status ${response.status}`);
@@ -266,7 +261,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
                   onClick={() => {
                     setDevLoginError(null);
                     setIsDevLoginLoading(true);
-                    fetch("http://127.0.0.1:8099/api/transactions/devLogin", {
+                    fetch(buildApiUrl("/api/transactions/devLogin"), {
                       method: "POST",
                       headers: { "Content-Type": "application/json" },
                     })

@@ -1,15 +1,8 @@
 import React, { useEffect, useState, useRef } from "react";
 import "../App.css";
 import "./CashFlowStyle.css";
-import {
-  Spinner,
-  Alert,
-  Card,
-  ListGroup,
-  Container,
-  Row,
-  Col,
-} from "react-bootstrap";
+import { Card, ListGroup, Container, Row, Col } from "react-bootstrap";
+import { buildApiUrl } from "../utils/api";
 
 const expenseCategories = [
   "Housing",
@@ -56,28 +49,28 @@ const Report = () => {
 
         const [categoryRes, summaryRes, expenseRes, incomeRes] =
           await Promise.all([
-            fetch("http://localhost:8099/api/reports/categorySummary", {
+            fetch(buildApiUrl("/api/reports/categorySummary"), {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
               },
             }),
-            fetch("http://localhost:8099/api/reports/summary", {
+            fetch(buildApiUrl("/api/reports/summary"), {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
               },
             }),
-            fetch("http://localhost:8099/api/reports/expenseSummary", {
+            fetch(buildApiUrl("/api/reports/expenseSummary"), {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",
                 Authorization: `Bearer ${token}`,
               },
             }),
-            fetch("http://localhost:8099/api/reports/incomeSummary", {
+            fetch(buildApiUrl("/api/reports/incomeSummary"), {
               method: "GET",
               headers: {
                 "Content-Type": "application/json",

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import CashFlowChart from './CashFlowChart';
 import './CashFlowStyle.css';
+import { buildApiUrl } from '../utils/api';
 
 interface Transaction {
     _id: string;
@@ -37,7 +38,7 @@ const CashFlow: React.FC = () => {
                     throw new Error('No authentication token found');
                 }
 
-                const response = await fetch('http://localhost:8099/api/read/userTransactions', {
+                const response = await fetch(buildApiUrl('/api/read/userTransactions'), {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',

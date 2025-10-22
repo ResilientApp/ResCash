@@ -2,6 +2,10 @@
   "name": "react-ts-resvault-sdk",
   "version": "0.1.0",
   "private": true,
+  "engines": {
+    "node": ">=20.0.0",
+    "npm": ">=9.0.0"
+  },
   "dependencies": {
     "@coreui/coreui": "^5.2.0",
     "@coreui/react": "^5.4.1",
@@ -54,6 +58,7 @@
     ]
   },
   "devDependencies": {
-    "@types/uuid": "^10.0.0"
+    "@types/uuid": "^10.0.0",
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
 }

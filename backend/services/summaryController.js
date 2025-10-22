@@ -2,7 +2,10 @@
 
 import fetch from "node-fetch";
 
-const API_URL = "http://localhost:8099/api/read/userTransactions";
+const apiBaseUrl =
+  process.env.INTERNAL_API_BASE_URL ||
+  `http://localhost:${process.env.PORT || 8099}`;
+const API_URL = `${apiBaseUrl.replace(/\/$/, "")}/api/read/userTransactions`;
 
 async function fetchTransactions(token) {
   const response = await fetch(API_URL, {
